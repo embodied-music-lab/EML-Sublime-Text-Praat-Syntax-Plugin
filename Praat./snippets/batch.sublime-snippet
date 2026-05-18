@@ -1,0 +1,9 @@
+<snippet>
+    <content><![CDATA[files\$# = fileNames\$# (${1:folder\$} + "/*.${2:wav}")
+for iFile from 1 to size (files\$#)
+	${0}
+endfor]]></content>
+    <tabTrigger>batch</tabTrigger>
+    <scope>source.praat</scope>
+    <description>Batch file loop</description>
+</snippet>
