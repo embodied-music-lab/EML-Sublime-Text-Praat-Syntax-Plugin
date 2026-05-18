@@ -1,8 +1,0 @@
-<snippet>
-    <content><![CDATA[form: "${1:Title}"
-	${0}
-endform]]></content>
-    <tabTrigger>form</tabTrigger>
-    <scope>source.praat</scope>
-    <description>Form block</description>
-</snippet>
