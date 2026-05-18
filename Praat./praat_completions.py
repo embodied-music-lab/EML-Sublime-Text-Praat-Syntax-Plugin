@@ -586,19 +586,22 @@ class PraatCompletionListener(sublime_plugin.EventListener):
         schema = _data.get("schema_version", 1)
         commands = _data.get("commands", {})
         for name, variants_data in commands.items():
-            name_lower = name.lower()
 
-            # Match from line start (standard behavior)
-            if name_lower.startswith(line_prefix_lower):
+            # Match from line start — CASE-SENSITIVE. Praat commands are
+            # case-sensitive; matching "to Pi" against "To Pitch" would
+            # produce broken code because ST4 can only replace the last
+            # word, leaving the wrong-case prefix in place.
+            if name.startswith(pre_text) and name.lower().startswith(line_prefix_lower):
                 remaining_name = name[len(pre_text):]
                 trigger = remaining_name
-            else:
-                # Word-boundary match: check if typed text matches any
-                # non-first word in the command name. Lets "CPPS" match
+            elif not pre_text.strip():
+                # Word-boundary match: ONLY when cursor is at line start
+                # (no partial command already typed). Lets "CPPS" match
                 # "Get CPPS", "Pitch" match "To Pitch (...)", etc.
+                # The full command name is inserted, replacing the prefix.
                 # Strip parens so "filtered" matches "(filtered" in
                 # "To Pitch (filtered autocorrelation)".
-                words = name_lower.split()
+                words = name.lower().split()
                 matched = False
                 for wi in range(1, len(words)):
                     suffix = " ".join(w.strip("(),") for w in words[wi:])
@@ -609,6 +612,8 @@ class PraatCompletionListener(sublime_plugin.EventListener):
                         break
                 if not matched:
                     continue
+            else:
+                continue
             # Normalize legacy single-variant entries
             if schema >= 3:
                 variant_list = variants_data
