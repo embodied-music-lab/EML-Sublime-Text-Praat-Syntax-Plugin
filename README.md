@@ -1,6 +1,6 @@
 # EML Sublime Text Praat Syntax Plugin
 
-**Version 0.7-beta.1** | May 2026
+**Version 0.7-beta.2** | May 2026
 
 A comprehensive Praat scripting environment for Sublime Text 4, providing syntax highlighting, intelligent autocomplete with parameter tables, hover documentation, and clinical voice analysis guidance.
 
@@ -63,7 +63,7 @@ See `INSTALLATION.md` for detailed instructions with platform-specific paths.
 
 **Framework:** EML PraatGen by Ian Howell, Embodied Music Lab — [embodiedmusiclab.com](https://www.embodiedmusiclab.com)
 
-**Code generation:** Ian Howell with PraatGen/Claude (Anthropic)
+**Code generation:** Claude (Anthropic)
 
 **Clinical parameters:** Praat defaults by Paul Boersma; CPPS parameters per Maryn et al. (2015); AVQI v02.06 per Maryn & Corthals (Phonanium).
 

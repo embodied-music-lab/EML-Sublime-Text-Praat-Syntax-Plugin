@@ -109,5 +109,5 @@ Your Sublime Text settings and other packages are not affected.
 ## Attribution
 
 PraatGen Syntax Plugin by Ian Howell, Embodied Music Lab
-(www.embodiedmusiclab.com). Code generation by Ian Howell with PraatGen/Claude (Anthropic).
+(www.embodiedmusiclab.com). Code generation by Claude (Anthropic).
 License: GPL-3.0-or-later.
