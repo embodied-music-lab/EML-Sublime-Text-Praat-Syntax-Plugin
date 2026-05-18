@@ -1,0 +1,8 @@
+<snippet>
+    <content><![CDATA[beginPause: "${1:Title}"
+	${0}
+clicked = endPause: "${2:Continue}", ${3:1}, 0]]></content>
+    <tabTrigger>beginpause</tabTrigger>
+    <scope>source.praat</scope>
+    <description>beginPause / endPause</description>
+</snippet>

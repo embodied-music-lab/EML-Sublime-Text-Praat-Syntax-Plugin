@@ -1,0 +1,8 @@
+<snippet>
+    <content><![CDATA[repeat
+	$0
+until ${1:condition}]]></content>
+    <tabTrigger>repeat</tabTrigger>
+    <scope>source.praat</scope>
+    <description>Repeat-until</description>
+</snippet>
