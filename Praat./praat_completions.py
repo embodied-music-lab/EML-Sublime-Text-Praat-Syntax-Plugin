@@ -544,6 +544,52 @@ class PraatStatusBarHints(sublime_plugin.EventListener):
 
 
 # ============================================================================
+# POST-COMPLETION CASE FIX
+# ============================================================================
+# ST4 completions can only replace the current word (prefix), not text before
+# it. When the user types "to Pi" and selects "To Pitch (...)", the lowercase
+# "to " stays. This TextCommand fixes the case after completion.
+
+class PraatFixCaseCommand(sublime_plugin.TextCommand):
+    """Fix command name case on the current line after completion."""
+
+    def run(self, edit):
+        if _command_lookup is None:
+            return
+        for region in self.view.sel():
+            line_region = self.view.line(region)
+            line_text = self.view.substr(line_region)
+            stripped = line_text.lstrip()
+            indent = len(line_text) - len(stripped)
+
+            # Strip noprogress/nocheck prefix
+            effective = stripped
+            skip = 0
+            for kw in ("noprogress ", "nocheck "):
+                if effective.lower().startswith(kw):
+                    skip = len(kw)
+                    effective = effective[skip:]
+                    break
+
+            # Extract command portion (before first colon, or whole line)
+            cmd_part = effective.split(":")[0].strip() if ":" in effective else effective.strip()
+            cmd_lower = cmd_part.lower()
+
+            # Look up in command registry
+            if cmd_lower in _command_lookup:
+                correct_name = _command_lookup[cmd_lower][0][0]
+                typed_name = effective[:len(correct_name)]
+                if typed_name != correct_name:
+                    start = line_region.begin() + indent + skip
+                    end = start + len(correct_name)
+                    self.view.replace(
+                        edit,
+                        sublime.Region(start, end),
+                        correct_name
+                    )
+
+
+# ============================================================================
 # COMPLETIONS
 # ============================================================================
 
@@ -587,11 +633,12 @@ class PraatCompletionListener(sublime_plugin.EventListener):
         commands = _data.get("commands", {})
         for name, variants_data in commands.items():
 
-            # Match from line start — CASE-SENSITIVE. Praat commands are
-            # case-sensitive; matching "to Pi" against "To Pitch" would
-            # produce broken code because ST4 can only replace the last
-            # word, leaving the wrong-case prefix in place.
-            if name.startswith(pre_text) and name.lower().startswith(line_prefix_lower):
+            # Match from line start — case-insensitive so "to Pi" finds
+            # "To Pitch". Note: if the user typed the verb prefix in wrong
+            # case (e.g. "to" instead of "To"), the wrong-case prefix stays
+            # on the line after completion. Praat is case-sensitive, so the
+            # user will need to fix it — but at least they see the options.
+            if name.lower().startswith(line_prefix_lower):
                 remaining_name = name[len(pre_text):]
                 trigger = remaining_name
             elif not pre_text.strip():
@@ -719,6 +766,51 @@ class PraatCompletionListener(sublime_plugin.EventListener):
 
         return sublime.CompletionList(results, flags=sublime.INHIBIT_WORD_COMPLETIONS)
 
+    def on_post_text_command(self, view, command_name, args):
+        """After a completion is committed, fix wrong-case command prefixes.
+        Catches commit_completion, insert_best_completion, and auto_complete."""
+        if command_name not in ('commit_completion', 'insert_best_completion',
+                                'auto_complete', 'insert_completion'):
+            return
+        if not view.sel():
+            return
+        if not view.match_selector(view.sel()[0].begin(), "source.praat"):
+            return
+        view.run_command('praat_fix_case')
+
+    def on_modified_async(self, view):
+        """Fallback: fix case on any modification (catches completions that
+        don't fire as named text commands). Guarded to only act when the
+        line looks like a just-completed command with wrong case."""
+        if not view.sel() or len(view.sel()) != 1:
+            return
+        if not view.match_selector(view.sel()[0].begin(), "source.praat"):
+            return
+        if _command_lookup is None:
+            return
+
+        region = view.sel()[0]
+        line_region = view.line(region)
+        line_text = view.substr(line_region)
+        stripped = line_text.lstrip()
+
+        # Only act if line has a colon (looks like a completed command)
+        if ":" not in stripped:
+            return
+
+        cmd_part = stripped.split(":")[0].strip()
+        # Strip noprogress/nocheck
+        for kw in ("noprogress ", "nocheck "):
+            if cmd_part.lower().startswith(kw):
+                cmd_part = cmd_part[len(kw):]
+                break
+
+        cmd_lower = cmd_part.lower()
+        if cmd_lower in _command_lookup:
+            correct_name = _command_lookup[cmd_lower][0][0]
+            if cmd_part != correct_name:
+                view.run_command('praat_fix_case')
+
 
 # ============================================================================
 # Hover popup
@@ -818,6 +910,15 @@ class PraatHoverListener(sublime_plugin.EventListener):
         if not view.match_selector(point, "source.praat"):
             return
 
+        # ALWAYS try line-level command extraction first, regardless of scope.
+        # This prevents ST4's native "Go to Definition" from hijacking the
+        # hover on words like "Pitch" that are both part of a command name
+        # and a defined symbol in other open files.
+        cmd_name = self._try_line_command(view, point)
+        if cmd_name:
+            self._popup_command(view, point, cmd_name)
+            return
+
         scope = view.scope_name(point)
 
         # Multi-word commands: extract the full scoped region (the syntax file
@@ -835,16 +936,8 @@ class PraatHoverListener(sublime_plugin.EventListener):
             self._popup_function(view, point, name)
             return
 
-        # Before checking types, try line-level command extraction.
-        # This catches words like "Pitch" in "To Pitch (filtered cross-
-        # correlation):" that the syntax file may scope as entity.name.type
-        # rather than as part of the command name.
+        # Object types
         if "entity.name.type" in scope:
-            cmd_name = self._try_line_command(view, point)
-            if cmd_name:
-                self._popup_command(view, point, cmd_name)
-                return
-            # Genuine type hover (not part of a command)
             region = view.word(point)
             name = view.substr(region)
             self._popup_type(view, point, name)
