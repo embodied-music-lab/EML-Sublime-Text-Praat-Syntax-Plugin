@@ -63,7 +63,7 @@ See `INSTALLATION.md` for detailed instructions with platform-specific paths.
 
 **Framework:** EML PraatGen by Ian Howell, Embodied Music Lab — [embodiedmusiclab.com](https://www.embodiedmusiclab.com)
 
-**Code generation:** Claude (Anthropic)
+**Code generation:** Ian Howell with PraatGen / Claude (Anthropic)
 
 **Clinical parameters:** Praat defaults by Paul Boersma; CPPS parameters per Maryn et al. (2015); AVQI v02.06 per Maryn & Corthals (Phonanium).
 
