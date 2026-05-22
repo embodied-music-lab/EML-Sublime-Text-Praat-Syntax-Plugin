@@ -1,6 +1,6 @@
 # EML Sublime Text Praat Syntax Plugin
 
-**v0.8-beta.1** | May 2026
+**v0.8-beta.11** | May 2026
 
 A comprehensive Praat scripting environment for Sublime Text 4, providing syntax highlighting, intelligent autocomplete with parameter tables, hover documentation, and clinical voice analysis guidance.
 
@@ -67,6 +67,12 @@ See `INSTALLATION.md` for detailed instructions with platform-specific paths.
 | `avqi` | AVQI v02.06 analysis (Maryn & Corthals) |
 | `infoheader` | Info window header block |
 
+## Next steps
+
+**Variable highlighting (planned).** Current variable handling is minimal: dot-prefixed locals and predefined string globals (`tab$`, `newline$`, `praatVersion$`, etc.) are scoped, but main-body identifiers and type-suffix distinctions are not. A planned upgrade adds categorical scopes that distinguish numeric scalars (`var`), string scalars (`var$`), numeric vectors (`var#`), string vectors (`var$#`), and matrices (`var##`), with separate sub-scopes for procedure-local (dot-prefixed) variants of each. Reserved constants (`e`, `pi`, `undefined`) are already scoped distinctly. Purely additive — themes that don't target Praat-specific scopes render identically.
+
+**Identity-aware highlighting (under consideration).** Sublime already provides word-literal occurrence highlighting via double-click, which covers most "where else is this variable used?" cases without plugin support. A scope-bounded cursor-driven highlight — matching procedure-local variables only within their enclosing procedure body, and main-body variables only outside procedures — is being scoped as a possible later addition. Full semantic resolution (connecting form-field declarations like `real: "Pitch floor (Hz)"` to their derived identifier `pitch_floor`, or tracking procedure parameter bindings) would require a Praat parser and is not currently on the roadmap.
+
 ## Attribution
 
 **Framework:** EML PraatGen by Ian Howell, Embodied Music Lab — [embodiedmusiclab.com](https://www.embodiedmusiclab.com)
@@ -75,7 +81,7 @@ See `INSTALLATION.md` for detailed instructions with platform-specific paths.
 
 **Clinical parameters:** Praat defaults by Paul Boersma; CPPS parameters per Maryn et al. (2015); AVQI v02.06 per Maryn & Corthals (Phonanium).
 
-**Command database:** Empirically verified against Praat 6.4.65 via the v6 sweep infrastructure (3086 command-host pairs probed). Dropdown options verified against Praat 6.4.65 via the v0.4 verification pipeline harness; v0.8-beta.1 build spot-checked against Praat 6.4.66.
+**Command database:** Empirically verified against Praat 6.4.65 via the v6 sweep infrastructure (3086 command-host pairs probed). Dropdown options verified against Praat 6.4.65 via the v0.4 verification pipeline harness; v0.8-beta.4 build spot-checked against Praat 6.4.66.
 
 ## License
 

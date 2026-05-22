@@ -25,7 +25,7 @@ This opens the `Packages/` directory in your file manager:
 ### 2. Copy the Praat folder
 
 If a `Praat/` folder already exists in your Packages directory (from
-another syntax highlighter), rename it or zip it as a backup before
+another syntax highlighter), delete it or zip it as a backup before
 proceeding.
 
 Copy the entire `Praat/` folder from this zip into your `Packages/` directory.
@@ -51,7 +51,7 @@ Packages/
 ### 3. Verify installation
 
 1. Open or create a file with a `.praat` extension.
-2. You should see Praat syntax highlighting immediately.
+2. You should see Praat syntax highlighting immediately (if not, check the lower right corner of SublimeText and choose the Praat encoding option from the pop up list).
 3. Start typing a command name (e.g., `To Pitch` or just `Pitch`)
    — autocomplete suggestions should appear.
 4. Hover over a command name in your script — a popup should show
