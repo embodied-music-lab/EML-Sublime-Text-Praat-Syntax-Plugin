@@ -54,6 +54,19 @@ See `INSTALLATION.md` for detailed instructions with platform-specific paths.
 3. Type `Get CPPS:` then hover over the command — the popup should show the `Interpolation` parameter with `choices: none, parabolic, cubic, sinc70, sinc700` listed inline. The validated default (`parabolic`) is inserted as the editable tab-stop; type another option to change it (the popup shows what's valid).
 4. Type `avqi` + Tab — the full AVQI analysis template should expand.
 
+## Snippets
+
+| Trigger | Description |
+|---------|-------------|
+| `for` | for loop |
+| `if` / `ifelse` / `ifelif` | conditionals |
+| `while` / `repeat` | loops |
+| `proc` | procedure definition |
+| `form` / `beginpause` | user input dialogs |
+| `batch` | batch file processing loop |
+| `avqi` | AVQI v02.06 analysis (Maryn & Corthals) |
+| `infoheader` | Info window header block |
+
 ## Attribution
 
 **Framework:** EML PraatGen by Ian Howell, Embodied Music Lab — [embodiedmusiclab.com](https://www.embodiedmusiclab.com)
