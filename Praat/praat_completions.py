@@ -292,7 +292,22 @@ def _param_snippet(params):
             parts.append('"${%d:%s}"' % (idx, val))
             idx += 1
         elif ptype in STRING_TYPES:
-            parts.append('"${%d:%s}"' % (idx, _clean_default(p.get("default", ""))))
+            opts = p.get("options")
+            default = _clean_default(p.get("default", ""))
+            # Note: Sublime's native CompletionItem snippet format does NOT
+            # support LSP-style choice tab-stops ${N|opt1,opt2|}. The choice
+            # syntax parses as an unrecognized tab-stop and Sublime inserts
+            # empty text. So we emit a plain default tab-stop here — users
+            # see the validated default pre-selected and can edit in place;
+            # the full choice list is shown in the hover popup.
+            if opts and default and default not in opts:
+                # Catalogue default isn't one of the options (e.g. raw C++
+                # expression). Substitute the first valid option as the
+                # pre-selected default for the snippet.
+                default = opts[0]
+            elif opts and not default:
+                default = opts[0]
+            parts.append('"${%d:%s}"' % (idx, default))
             idx += 1
         else:
             parts.append("${%d:%s}" % (idx, _clean_default(p.get("default", ""))))
@@ -301,11 +316,13 @@ def _param_snippet(params):
 
 
 def _expand_params_for_display(params):
-    """Yield (display_label, type, display_default) tuples.
+    """Yield (display_label, type, display_default, options) tuples.
 
     Splits merged left/right pairs into two rows so numbered indices in
     the details panel match the inserted tab-stop positions. BOOLEAN
-    defaults are shown in canonical yes/no form.
+    defaults are shown in canonical yes/no form. The 4th element is the
+    options list for CHOICE/OPTIONMENU fields, or None for other types
+    and for synthesized rows from merged ranges.
     """
     for p in params:
         if p.get("_merged"):
@@ -316,17 +333,19 @@ def _expand_params_for_display(params):
             if left_label == right_label:
                 # Catalogue stores identical left/right bodies; surface
                 # the shared label qualified with min/max
-                yield (left_label + " (min)", p.get("type", ""), ld)
-                yield (right_label + " (max)", p.get("type", ""), rd)
+                yield (left_label + " (min)", p.get("type", ""), ld, None)
+                yield (right_label + " (max)", p.get("type", ""), rd, None)
             else:
-                yield (left_label, p.get("type", ""), ld)
-                yield (right_label, p.get("type", ""), rd)
+                yield (left_label, p.get("type", ""), ld, None)
+                yield (right_label, p.get("type", ""), rd, None)
         elif p.get("type") == "BOOLEAN":
             yield (p.get("label", ""), p.get("type", ""),
-                   _canonical_boolean(_clean_default(p.get("default", ""))))
+                   _canonical_boolean(_clean_default(p.get("default", ""))),
+                   None)
         else:
             yield (p.get("label", ""), p.get("type", ""),
-                   _clean_default(p.get("default", "")))
+                   _clean_default(p.get("default", "")),
+                   p.get("options"))
 
 
 def _field_count(params):
@@ -343,8 +362,12 @@ def _details_html(name, variant, include_clinical=True):
     """
     params = variant.get("params", [])
     rows = []
-    for i, (label, ptype, default) in enumerate(_expand_params_for_display(params), 1):
-        rows.append("%d. <b>%s</b> (%s) = %s" % (i, label, ptype, default))
+    for i, (label, ptype, default, opts) in enumerate(_expand_params_for_display(params), 1):
+        row = "%d. <b>%s</b> (%s) = %s" % (i, label, ptype, default)
+        if opts:
+            choices = ", ".join(_esc(o) for o in opts)
+            row += '<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="opts">choices: %s</span>' % choices
+        rows.append(row)
 
     body = "<br>".join(rows) if rows else ""
 
@@ -399,7 +422,7 @@ def _get_param_labels(params):
     length matches `_field_count(params)`.
     """
     labels = []
-    for label, ptype, _default in _expand_params_for_display(params):
+    for label, ptype, _default, _opts in _expand_params_for_display(params):
         # Strip units in parens for status-bar brevity
         clean = label.split(" (")[0].strip()
         labels.append(clean)
@@ -842,6 +865,7 @@ POPUP_CSS = """
     .sep { margin: 0.4rem 0; border-top: 1px solid var(--foreground); opacity: 0.25; }
     .clinical { color: var(--purplish); margin-top: 0.5rem; }
     .section { margin-top: 0.3rem; }
+    .opts { color: var(--bluish); font-family: monospace; font-size: 0.9em; }
 </style>
 """
 
