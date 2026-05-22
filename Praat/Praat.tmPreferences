@@ -6,6 +6,8 @@
     <string>source.praat</string>
     <key>settings</key>
     <dict>
+        <key>wordCharacters</key>
+        <string>$#</string>
         <key>shellVariables</key>
         <array>
             <dict>

@@ -519,6 +519,12 @@ def _find_command_and_position(view, point):
             fn_name = tokens[-1]
             sig = _func_sigs.get(fn_name, {})
             args_str = sig.get("args", "")
+            # New-style signatures list: take the first signature's args
+            # for the status-bar hint (canonical primary form).
+            if not args_str:
+                sig_list = sig.get("signatures") or []
+                if sig_list:
+                    args_str = sig_list[0].get("args", "")
             if args_str:
                 arg_list = [a.strip() for a in args_str.split(",")]
                 params = [{"label": a, "type": "arg"} for a in arg_list]
@@ -745,14 +751,36 @@ class PraatCompletionListener(sublime_plugin.EventListener):
                 else:
                     args = (sig or {}).get("args", "")
                     desc = (sig or {}).get("desc", "")
+                    # If this entry uses the new `signatures` list (3+
+                    # overloads), draw args/desc from the first
+                    # signature — the canonical primary form. The hover
+                    # popup still iterates and shows all signatures.
+                    if not args and sig:
+                        sig_list = sig.get("signatures") or []
+                        if sig_list:
+                            args = sig_list[0].get("args", "")
+                            desc = sig_list[0].get("desc", "")
+                    # Sublime's snippet parser treats $ as a sigil for tab-stops
+                    # ($0, $1, ${1:default}) and variables ($BLOCK_COMMENT_START).
+                    # Function names like fixed$, length$, fileNames$# contain
+                    # a literal $ that must be escaped as \$ in snippet content.
+                    # Without this, insertion produces undefined behavior — most
+                    # destructively, clearing the surrounding line.
+                    # The `trigger` field is not parsed as a snippet, so fn
+                    # stays unescaped there.
+                    fn_snip = fn.replace("$", "\\$")
                     if args:
                         arg_list = [a.strip() for a in args.split(",")]
+                        # Argument labels may also contain $ (e.g. "matrix##",
+                        # "vector#" are fine, but "string$" needs escaping
+                        # because it lands inside the placeholder default).
                         tab_args = ", ".join(
-                            "${%d:%s}" % (i + 1, a) for i, a in enumerate(arg_list)
+                            "${%d:%s}" % (i + 1, a.replace("$", "\\$"))
+                            for i, a in enumerate(arg_list)
                         )
-                        snip = "%s (%s)" % (fn, tab_args)
+                        snip = "%s (%s)" % (fn_snip, tab_args)
                     else:
-                        snip = fn + " ($0)"
+                        snip = fn_snip + " ($0)"
                     ann = "function" if not desc else ("function \u2014 " + desc[:40])
                     item = sublime.CompletionItem.snippet_completion(
                         trigger=fn,
@@ -850,7 +878,10 @@ class PraatCompletionListener(sublime_plugin.EventListener):
 #   support.function.command.praat       — multi-word command (Get start time)
 #   support.function.{matrix,vector,
 #     string,string-array,praat}         — single-token functions
-#   entity.name.type.praat               — object types (Sound, TextGrid, ...)
+#   support.type.praat                   — object types (Sound, TextGrid, ...)
+#                                          renamed from entity.name.type in
+#                                          v0.8-beta.11 to suppress ST's
+#                                          auto-symbol-indexing on these.
 #   entity.name.function.procedure-call  — @procName calls
 
 POPUP_CSS = """
@@ -953,17 +984,37 @@ class PraatHoverListener(sublime_plugin.EventListener):
             self._popup_command(view, point, name)
             return
 
-        # Single-token functions: any other support.function.* scope
+        # Single-token functions: any other support.function.* scope.
+        # Use extract_scope (not view.word) because view.word splits on
+        # `$` and `#`, returning 'mul' instead of 'mul##' and 'fixed'
+        # instead of 'fixed$'. The wordCharacters="$#" setting in
+        # Praat.tmPreferences is supposed to fix this but is ignored
+        # by ST4 on macOS — empirically confirmed 2026-05-22.
+        # The syntax file tags the entire function name (suffixes
+        # included) as a single scoped region, so extract_scope
+        # returns the correct span.
         if "support.function" in scope:
-            region = view.word(point)
-            name = view.substr(region)
+            region = view.extract_scope(point)
+            # .strip() because the plain-function syntax rule consumes
+            # trailing whitespace into the match (\s*(?=\(|\s|$)),
+            # so extract_scope returns 'ceiling ' instead of 'ceiling'.
+            # The ##/#/$/$# rules use pure lookaheads and don't have
+            # this issue, but .strip() is defensive against future
+            # syntax-file changes.
+            name = view.substr(region).strip()
             self._popup_function(view, point, name)
             return
 
-        # Object types
-        if "entity.name.type" in scope:
-            region = view.word(point)
-            name = view.substr(region)
+        # Object types — scope is `support.type.praat` (not entity.name.*).
+        # Renamed from entity.name.type in v0.8-beta.11 so Sublime no longer
+        # auto-indexes Praat object types as symbols, which prevents ST's
+        # "Show Definitions" hover from firing on `Table`, `Sound`, `Pitch`,
+        # etc. wherever they appear in a buffer (including inside multi-word
+        # commands like `Create Table with column names:` where the bare-word
+        # indexing was firing despite the surrounding scope being a command).
+        if "support.type" in scope:
+            region = view.extract_scope(point)
+            name = view.substr(region).strip()
             self._popup_type(view, point, name)
             return
 
@@ -973,6 +1024,71 @@ class PraatHoverListener(sublime_plugin.EventListener):
             text = view.substr(region).strip()
             self._popup_procedure(view, point, text)
             return
+
+        # ---- Scope-agnostic fallback ----
+        # The scope-based dispatch above misses several cases:
+        #   1. tab$, newline$ and other predefined string variables — syntax
+        #      tags these as constant.language.praat, not support.function.
+        #   2. Buffers that aren't fully recognized as source.praat (e.g.
+        #      untitled buffers, syntax-assignment edge cases) may have weaker
+        #      scope coverage on individual tokens.
+        # We use a manual word extractor (not view.word) because view.word
+        # splits on `$` and `#` regardless of tmPreferences wordCharacters
+        # setting — empirically confirmed 2026-05-22 on macOS ST4.
+        #
+        # IMPORTANT: only fire popups here for zero-argument entries. If a
+        # function takes arguments, the syntax file's regex requires `(`
+        # to follow the name before assigning the function scope. If we
+        # reach this fallback with a multi-arg function name in hand, that
+        # means the syntax did NOT classify it as a function call — the
+        # user wrote `string$` in a position like `index (string$, part$)`
+        # where `string$` is a parameter placeholder, not a function call.
+        # Firing the function popup there is misleading. Restrict the
+        # fallback to true constants like `tab$` and `newline$` whose
+        # `args` field is empty.
+        region = self._extract_token_at(view, point)
+        name = view.substr(region)
+        if name in _func_sigs:
+            sig = _func_sigs[name]
+            takes_args = bool(sig.get("args") or sig.get("signatures"))
+            if not takes_args:
+                self._popup_function(view, point, name)
+                return
+        if name in _data.get("object_types", []):
+            self._popup_type(view, point, name)
+            return
+
+    def _extract_token_at(self, view, point):
+        """Extract a token at `point`, treating `$` and `#` as word characters.
+
+        Sublime Text's `view.word(point)` uses the platform default word
+        definition, which splits on `$` and `#`. The `wordCharacters="$#"`
+        setting in Praat.tmPreferences is intended to extend this but is
+        not reliably applied by ST4 on macOS (empirically confirmed
+        2026-05-22). This helper does the extraction manually so the
+        plugin is host-independent and settings-independent.
+        """
+        line_region = view.line(point)
+        line_text = view.substr(line_region)
+        line_start = line_region.begin()
+        col = point - line_start
+        # Extend left while character is alnum or in {_, $, #}
+        start = col
+        while start > 0:
+            ch = line_text[start - 1]
+            if ch.isalnum() or ch in "_$#":
+                start -= 1
+            else:
+                break
+        # Extend right
+        end = col
+        while end < len(line_text):
+            ch = line_text[end]
+            if ch.isalnum() or ch in "_$#":
+                end += 1
+            else:
+                break
+        return sublime.Region(line_start + start, line_start + end)
 
     def _popup_command(self, view, point, name):
         variants = _command_lookup.get(name.lower(), [])
@@ -1029,8 +1145,29 @@ class PraatHoverListener(sublime_plugin.EventListener):
         sig = _func_sigs.get(name)
         if not sig:
             return
+        # New-style: a `signatures` list of {args, desc} dicts, one per
+        # overload. Used when a function has 3+ overloads (e.g. fixed$
+        # accepting scalar/vector/matrix). Takes precedence over the
+        # legacy args+alt_args path.
+        signatures = sig.get("signatures")
+        if signatures:
+            body = ""
+            for i, sg in enumerate(signatures):
+                head_parts = ["<code>%s</code>" % _esc(name)]
+                if sg.get("args"):
+                    head_parts.append("<code>(%s)</code>" % _esc(sg["args"]))
+                if i > 0:
+                    body += '<div class="sep"></div>'
+                body += '<div class="head">%s</div>' % " ".join(head_parts)
+                if sg.get("desc"):
+                    body += "<br/>" + _esc(sg["desc"])
+            _popup_show(view, point, body, max_height=320)
+            return
+        # Legacy path: args + optional alt_args/alt_desc (2 overloads).
         args = sig.get("args", "")
         desc = sig.get("desc", "")
+        alt_args = sig.get("alt_args", "")
+        alt_desc = sig.get("alt_desc", "")
         head_parts = ["<code>%s</code>" % _esc(name)]
         if args:
             head_parts.append("<code>(%s)</code>" % _esc(args))
@@ -1038,6 +1175,14 @@ class PraatHoverListener(sublime_plugin.EventListener):
         body = head
         if desc:
             body += "<br/>" + _esc(desc)
+        if alt_args or alt_desc:
+            body += '<div class="sep"></div>'
+            alt_head_parts = ["<code>%s</code>" % _esc(name)]
+            if alt_args:
+                alt_head_parts.append("<code>(%s)</code>" % _esc(alt_args))
+            body += '<div class="head">%s</div>' % " ".join(alt_head_parts)
+            if alt_desc:
+                body += "<br/>" + _esc(alt_desc)
         _popup_show(view, point, body, max_height=320)
 
     def _popup_type(self, view, point, name):
