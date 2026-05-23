@@ -1,61 +1,248 @@
 <snippet>
     <content><![CDATA[# ============================================================================
-# AVQI v.02.06 + v.03.01 Analysis Template
+# AVQI v.02.06 + v.03.01 Analysis
+# ============================================================================
+# Purpose: Compute the Acoustic Voice Quality Index v.02.06 (Maryn &
+# Weenink, 2015) and optionally v.03.01 (Barsties & Maryn, 2015) on a
+# paired sustained vowel + continuous speech recording.
 #
-# Independent implementation of the Acoustic Voice Quality Index
-# methodology. Computes BOTH version 2.06 (Maryn & Weenink, 2015) AND
-# version 3.01 (Barsties & Maryn, 2015) scores from the same predictor
-# set on the same concatenated avqi signal.
+# Algorithm: Voiced-segment extraction follows the canonical Phonanium
+# AVQI v.02.06 procedure — high-pass filter (stop Hann 0 to 34 Hz),
+# silence-based segmentation (To TextGrid (silences) at -25 dB), 30 ms
+# non-overlapping windows classified voiced via power > 30% of global
+# power AND zero-crossing rate < 3000/s. When v.03.01 is enabled, a
+# second avqi signal is constructed from the first 3 s of voiced
+# continuous speech concatenated with the same sustained-vowel
+# selection, and all six predictors are recomputed on that signal
+# before the v.03.01 regression is applied.
 #
-# The two versions differ only in regression coefficients (the same
-# extraction procedure is used; v.03.01's "equalized duration" is
-# achieved through input protocol — syllable-controlled CS — not
-# through script-level transformation). See Barsties & Maryn (2015,
-# Am J Otolaryngol 36:647-656, Section 2.2/2.6) and Fantini et al.
-# (2021/2023, J Voice 37:631.e1-631.e6) for the v.03.01 specification.
+# Sustained vowel selection modes:
+#   entire     — use the full sustained vowel (irrespective of duration)
+#   middle 3 s — center cut (Maryn & Roy 2009 original methodology)
+#   final 3 s  — last 3 s (current Phonanium canonical; default)
 #
-# Free implementation. Published methodology, parameter values, and
-# regression coefficients are used as facts. Code is original.
+# See GROUNDED_ARGUMENTS_AVQI_v0.8-beta.12.md for methodological
+# rationale on truncation direction, dual signals, sustained vowel
+# mode default, and the fixed\$ rounding fix.
 #
-# Author: Ian Howell, Embodied Music Lab (www.embodiedmusiclab.com)
-# Framework: EML PraatGen
+# Date: 24 May 2026
+# Version: 3.2
+#
+# ATTRIBUTION
+# Framework: EML PraatGen by Ian Howell
+#            Embodied Music Lab — www.embodiedmusiclab.com
+#            https://github.com/embodied-music-lab/PraatGen
+# Code generation: Claude (Anthropic)
+# Script author: Ian Howell — created and verified by this individual
+#
+# RESEARCH USE DISCLOSURE
+# If used in research or publication, disclose AI use per your target
+# journal's policy. Suggested language:
+#
+#   "AVQI v.02.06 (Maryn & Weenink, 2015) and v.03.01 (Barsties & Maryn,
+#    2015) were computed using an EML PraatGen-generated Praat script
+#    (Howell, Embodied Music Lab; code generation by Claude/Anthropic).
+#    Voiced-segment extraction follows the canonical Phonanium v.02.06
+#    algorithm. The v.03.01 score was computed on a separate avqi signal
+#    constructed from the first 3 s of voiced continuous speech plus the
+#    [final/middle/entire] portion of the sustained vowel. All output
+#    was reviewed and validated by [your name]."
+#
+# License: GPL-3.0-or-later
 # ============================================================================
 
-# Capture Praat version for output (see notes section if output retained)
+# ============================================================================
+# SETTINGS DIALOG (commentable-out)
+# ============================================================================
+# To bypass this dialog (e.g., when calling from another script),
+# comment out the beginPause/endPause block and the variable
+# assignments below it. Set these variables manually instead:
+#
+#   svFile\$           — path to sustained vowel WAV (only if useSelected = 0)
+#   csFile\$           — path to continuous speech WAV (only if useSelected = 0)
+#   useSelected       — 0: read from files
+#                       1: use the Sound objects named "sv" and "cs"
+#                          that are SELECTED (highlighted) in the
+#                          Objects window
+#   svMode\$           — "entire" | "middle 3 s" | "final 3 s"
+#   runV3             — 0: v.02.06 only | 1: also compute v.03.01
+#   outputDir\$        — folder for results text file ("" = skip)
+#   outputFilename\$   — filename within outputDir\$
+#                       (e.g., "avqi_results.txt")
+#
+# The input-validation loops below will still run; they re-show a
+# small dialog if the requested files or objects are missing. For
+# fully unattended operation, also comment out the validation loops
+# and set svId / csId directly.
+# ============================================================================
+
+beginPause: "AVQI analysis settings"
+comment: "=========================================================="
+comment: "AVQI ANALYSIS: From a sustained vowel and continuous speech recording"
+comment: "=========================================================="
+    choice: "Input source", 1
+        option: "Read sv and cs from WAV files"
+        option: "sv and cs Sound objects selected"
+ 
+    comment: "If reading from files, browse to them here"
+    infile: "Sustained vowel file", ""
+    infile: "Continuous speech file", ""
+    optionmenu: "Sustained vowel mode (if longer than 3 s)", 3
+        option: "entire"
+        option: "middle 3 s"
+        option: "final 3 s"
+    comment: "----------------------------------------------------------"
+    boolean: "Also compute v 03 01", 1
+    comment: "NOTE: v.03.01 expects ~3 s of voiced continuous speech;"
+    comment: "If enabled, voiced continuous speech is truncated to its first 3 s;"
+    comment: "v.02.06 always uses the full voiced continuous speech."
+    comment: "----------------------------------------------------------"
+    comment: "Results print to Info Window. To save to a text file choose output folder:"
+    folder: "Output folder", ""
+    sentence: "Output filename", "avqi_results.txt"
+
+clicked = endPause: "Quit", "Run", 2, 0
+if clicked = 1
+    exitScript: "User cancelled."
+endif
+
+svFile\$         = sustained_vowel_file\$
+csFile\$         = continuous_speech_file\$
+useSelected     = (input_source = 2)
+svMode\$         = sustained_vowel_mode\$
+runV3           = also_compute_v_03_01
+outputDir\$      = output_folder\$
+outputFilename\$ = output_filename\$
+
+# ============================================================================
+# RESOLVE INPUT OBJECTS — popups (Continue/Quit) on failure
+# ============================================================================
+
+if useSelected
+    selValid = 0
+    while not selValid
+        svId = 0
+        csId = 0
+        nSel = numberOfSelected ("Sound")
+        for iSel from 1 to nSel
+            selName\$ = selected\$ ("Sound", iSel)
+            if selName\$ = "sv"
+                svId = selected ("Sound", iSel)
+            elsif selName\$ = "cs"
+                csId = selected ("Sound", iSel)
+            endif
+        endfor
+        if svId > 0 and csId > 0
+            selValid = 1
+        else
+            if svId = 0 and csId = 0
+                problem\$ = "No Sound named sv or cs is currently selected."
+            elsif svId = 0
+                problem\$ = "No Sound named sv is currently selected."
+            else
+                problem\$ = "No Sound named cs is currently selected."
+            endif
+            beginPause: "Selection issue"
+                comment: problem\$
+                comment: ""
+                comment: "Select both Sound sv and Sound cs in the Objects window,"
+                comment: "then click Continue. Or Quit to abort."
+            clicked = endPause: "Quit", "Continue", 2, 0
+            if clicked = 1
+                exitScript: "User aborted."
+            endif
+        endif
+    endwhile
+else
+    pathValid = 0
+    while not pathValid
+        svOk = fileReadable (svFile\$)
+        csOk = fileReadable (csFile\$)
+        if svOk and csOk
+            pathValid = 1
+        else
+            if not svOk and not csOk
+                problem\$ = "Neither file is readable."
+            elsif not svOk
+                problem\$ = "Sustained vowel file is not readable: " + svFile\$
+            else
+                problem\$ = "Continuous speech file is not readable: " + csFile\$
+            endif
+            beginPause: "File issue"
+                comment: problem\$
+                comment: ""
+                infile: "Sustained vowel file", svFile\$
+                infile: "Continuous speech file", csFile\$
+            clicked = endPause: "Quit", "Continue", 2, 0
+            if clicked = 1
+                exitScript: "User aborted."
+            endif
+            svFile\$ = sustained_vowel_file\$
+            csFile\$ = continuous_speech_file\$
+        endif
+    endwhile
+    svId = Read from file: svFile\$
+    Rename: "sv"
+    csId = Read from file: csFile\$
+    Rename: "cs"
+endif
+
+# ============================================================================
+# RESOLVE OUTPUT FILE PATH — Rule 27 overwrite protection
+# ============================================================================
+# If outputDir\$ is non-blank, construct outputDir\$ + "/" + outputFilename\$
+# and apply Rule 27 overwrite protection. Existing files get an
+# auto-numbered suffix (_2, _3, ...). If outputDir\$ is blank, file
+# output is skipped entirely.
+
+finalOutputFile\$ = ""
+if outputDir\$ <> ""
+    # Strip trailing slash for clean concatenation
+    if right\$ (outputDir\$, 1) = "/"
+        outputDir\$ = left\$ (outputDir\$, length (outputDir\$) - 1)
+    endif
+    candidatePath\$ = outputDir\$ + "/" + outputFilename\$
+    @resolveOutputPath: candidatePath\$
+    finalOutputFile\$ = resolveOutputPath.path\$
+endif
+
+# Capture Praat version for the output (CPPS algorithm vintage)
 praatVer\$ = praatVersion\$
 
-# --- Input: sustained vowel (sv) and continuous speech (cs) ---
-svId = ${1:svSoundId}
-csId = ${2:csSoundId}
+# ============================================================================
+# PART 1 — High-pass filter (canonical Phonanium, applied to both)
+# ============================================================================
 
-# --- PART 1: High-pass filter (stop Hann band 0 to 34 Hz) ---
-selectObject: csId
-csFiltered = noprogress Filter (stop Hann band): 0, 34, 0.1
 selectObject: svId
 svFiltered = noprogress Filter (stop Hann band): 0, 34, 0.1
 
-# --- PART 2: Voiced segment extraction from continuous speech ---
+selectObject: csId
+csFiltered = noprogress Filter (stop Hann band): 0, 34, 0.1
 
-# Step 2a: Silence detection on filtered CS
+# ============================================================================
+# PART 2 — Voiced-segment extraction from filtered continuous speech
+# ============================================================================
+# Canonical Phonanium algorithm: silence detection -> 30 ms non-overlap
+# window slide -> keep windows where power > 30% global power AND
+# zero-crossing rate < 3000/s.
+
 selectObject: csFiltered
 csGrid = noprogress To TextGrid (silences): 50, 0.003, -25, 0.1, 0.1, "silence", "sounding"
 
-# Step 2b: Extract non-silence intervals and concatenate into onlyLoud
 selectObject: csFiltered
 plusObject: csGrid
 Extract intervals where: 1, "no", "does not contain", "silence"
 nLoudExtracted = numberOfSelected ("Sound")
 loudIds# = zero# (nLoudExtracted)
 for iLoud from 1 to nLoudExtracted
-    loudIds#[iLoud] = selected ("Sound", iLoud)
+    loudIds# [iLoud] = selected ("Sound", iLoud)
 endfor
 onlyLoud = noprogress Concatenate
 for iLoud from 1 to nLoudExtracted
-    removeObject: loudIds#[iLoud]
+    removeObject: loudIds# [iLoud]
 endfor
 removeObject: csGrid
 
-# Step 2c: Initialize parameters and onlyVoice (1 ms silence prefix)
 selectObject: onlyLoud
 samplingRate = Get sampling frequency
 intermediateSamples = Get sampling period
@@ -64,10 +251,9 @@ signalEnd = Get end time
 globalPower = Get power in air
 voicelessThreshold = globalPower * 0.3
 
+# Start onlyVoice as a 1 ms silence prefix (canonical Phonanium starter)
 onlyVoiceId = Create Sound from formula: "onlyVoice", 1, 0, 0.001, samplingRate, "0"
 
-# Step 2d: Slide 30 ms non-overlapping windows through onlyLoud.
-# Keep windows where power > 30% global power AND ZCR < 3000/s.
 windowWidth = 0.03
 windowBorderLeft = signalStart
 windowBorderRight = windowBorderLeft + windowWidth
@@ -99,153 +285,368 @@ endwhile
 removeObject: onlyLoud
 removeObject: csFiltered
 
-# Capture voiced-CS duration for v.03.01 protocol compliance check
 selectObject: onlyVoiceId
-durationVCS = Get total duration
+durationVoicedCS = Get total duration
 
-# --- PART 3: Sustained vowel — last 3 seconds if longer than 3 s ---
+# ============================================================================
+# PART 3 — Sustained vowel selection (svMode\$)
+# ============================================================================
+# Always operates on the filtered sustained vowel. If duration <= 3 s,
+# all modes degenerate to "entire."
+
 selectObject: svFiltered
 svDur = Get total duration
-if svDur > 3
-    sv2 = Extract part: svDur - 3, svDur, "rectangular", 1, "no"
+
+if svMode\$ = "entire" or svDur <= 3
+    svPart = Copy: "svPart"
+elsif svMode\$ = "middle 3 s"
+    svMidStart = (svDur - 3) / 2
+    svPart = Extract part: svMidStart, svMidStart + 3, "rectangular", 1, "no"
 else
-    sv2 = Copy: "sv2"
+    # "final 3 s"
+    svPart = Extract part: svDur - 3, svDur, "rectangular", 1, "no"
 endif
+
 removeObject: svFiltered
 
-# --- PART 4: Concatenate onlyVoice + sv2 (canonical order) ---
+selectObject: svPart
+durationSV = Get total duration
+
+# ============================================================================
+# PART 4 — Build v.02.06 avqi signal (full voiced CS + sustained vowel part)
+# ============================================================================
+
 selectObject: onlyVoiceId
-plusObject: sv2
-avqiSignal = noprogress Concatenate
-removeObject: onlyVoiceId, sv2
+plusObject: svPart
+avqiV2signal = noprogress Concatenate
+Rename: "avqi_v0206"
 
-# --- PART 5a: CPPS (Maryn et al., 2015) ---
-selectObject: avqiSignal
-cepstrogram = noprogress To PowerCepstrogram: 60, 0.002, 5000, 50
-cpps = Get CPPS: "no", 0.01, 0.001, 60, 330, 0.05, "Parabolic", 0.001, 0, "Straight", "Robust"
-removeObject: cepstrogram
+# ============================================================================
+# PART 5 — Run predictor pipeline on v.02.06 avqi signal
+# ============================================================================
 
-# --- PART 5b: LTAS slope (whole spectrum, energy averaging) ---
-selectObject: avqiSignal
-ltas = noprogress To Ltas: 1
-slope = Get slope: 0, 1000, 1000, 10000, "energy"
+@runAvqiPipeline: avqiV2signal
+cpps  = runAvqiPipeline.cpps
+hnr   = runAvqiPipeline.hnr
+shim  = runAvqiPipeline.shim
+shdb  = runAvqiPipeline.shdb
+slope = runAvqiPipeline.slope
+tilt  = runAvqiPipeline.tilt
 
-# --- PART 5c: LTAS tilt (regression trend line through 1 to 10000 Hz) ---
-trendLine = noprogress Compute trend line: 1, 10000
-tilt = Get slope: 0, 1000, 1000, 10000, "energy"
-removeObject: trendLine, ltas
-
-# --- PART 5d: Shimmer via PointProcess (periodic, cc) — direct from Sound ---
-selectObject: avqiSignal
-ppShim = noprogress To PointProcess (periodic, cc): 50, 400
-selectObject: avqiSignal, ppShim
-percentShimmer = Get shimmer (local): 0, 0, 0.0001, 0.02, 1.3, 1.6
-shim = percentShimmer * 100
-shdb = Get shimmer (local_dB): 0, 0, 0.0001, 0.02, 1.3, 1.6
-removeObject: ppShim
-
-# --- PART 5e: HNR via Voice report (uses its own Pitch object 75 to 600) ---
-selectObject: avqiSignal
-pitchHnr = noprogress To Pitch (raw cross-correlation): 0, 75, 600, 15, "no", 0.03, 0.45, 0.01, 0.35, 0.14
-selectObject: avqiSignal, pitchHnr
-ppHnr = noprogress To PointProcess (cc)
-selectObject: avqiSignal, pitchHnr, ppHnr
-voiceReport\$ = noprogress Voice report: 0, 0, 75, 600, 1.3, 1.6, 0.03, 0.45
-hnr = extractNumber (voiceReport\$, "Mean harmonics-to-noise ratio: ")
-removeObject: pitchHnr, ppHnr
-
-# --- PART 6: AVQI regression — BOTH versions ---
-# v.02.06 (Maryn & Weenink, 2015, J Voice 29:35-43)
+# AVQI v.02.06 regression (Maryn & Weenink, 2015, J Voice 29(1):35-43,
+# DOI: 10.1016/j.jvoice.2014.06.015)
 avqi = ((3.295 - (0.111 * cpps) - (0.073 * hnr) - (0.213 * shim) + (2.789 * shdb) - (0.032 * slope) + (0.077 * tilt)) * 2.208) + 1.797
 
-# v.03.01 (Barsties & Maryn, 2015, Am J Otolaryngol 36:647-656, Section 3.3)
-# Same predictors, different regression weights. Protocol assumption: input
-# CS was syllable-controlled to produce ~3 s of voiced material after
-# extraction (matching the 3 s SV). Note SIGN FLIP on Slope coefficient
-# vs v.02.06 (-0.032 to +0.01).
-avqiV3 = (4.152 - (0.177 * cpps) - (0.006 * hnr) - (0.037 * shim) + (0.941 * shdb) + (0.01 * slope) + (0.093 * tilt)) * 2.8902
+# ============================================================================
+# PART 6 — v.03.01 path (separate avqi signal, separate predictors)
+# ============================================================================
+# Build only if requested AND voiced continuous speech >= 3 s. Truncates
+# voiced continuous speech to its first 3 s (preserves prosodic onset;
+# models a protocol-compliant syllable-controlled recording).
 
-# v.03.01 protocol compliance check (vCS should be ~3 s for valid v.03.01)
-vCSDurationOK = (durationVCS >= 2.5 and durationVCS <= 3.5)
+v3Computable = (runV3 and durationVoicedCS >= 3)
 
-# Light extrapolation flag: flags clearly out-of-distribution predictors
-# (e.g., synthesized clean signals). Bounds are loose clinical-range
-# estimates, not training-distribution bounds.
-extrapolationFlag = 0
-if cpps < 4 or cpps > 22
-    extrapolationFlag = extrapolationFlag + 1
-endif
-if hnr < 0 or hnr > 30
-    extrapolationFlag = extrapolationFlag + 1
-endif
-if shim < 0.1 or shim > 20
-    extrapolationFlag = extrapolationFlag + 1
-endif
-if shdb < 0.05 or shdb > 3
-    extrapolationFlag = extrapolationFlag + 1
+if v3Computable
+    selectObject: onlyVoiceId
+    onlyVoiceTrunc = Extract part: 0, 3, "rectangular", 1, "no"
+
+    selectObject: onlyVoiceTrunc
+    plusObject: svPart
+    avqiV3signal = noprogress Concatenate
+    Rename: "avqi_v0301"
+
+    removeObject: onlyVoiceTrunc
+
+    @runAvqiPipeline: avqiV3signal
+    cppsV3  = runAvqiPipeline.cpps
+    hnrV3   = runAvqiPipeline.hnr
+    shimV3  = runAvqiPipeline.shim
+    shdbV3  = runAvqiPipeline.shdb
+    slopeV3 = runAvqiPipeline.slope
+    tiltV3  = runAvqiPipeline.tilt
+
+    # AVQI v.03.01 regression (Barsties & Maryn, 2015, Am J Otolaryngol 36(5):647-656,
+    # DOI: 10.1016/j.amjoto.2015.04.012)
+    avqiV3 = (4.152 - (0.177 * cppsV3) - (0.006 * hnrV3) - (0.037 * shimV3) + (0.941 * shdbV3) + (0.01 * slopeV3) + (0.093 * tiltV3)) * 2.8902
+
+    removeObject: avqiV3signal
 endif
 
 # ============================================================================
-# OUTPUT SECTION — modify or delete for your calling script
+# PART 7 — Cleanup intermediate signals
 # ============================================================================
-# The block below writes to the Info window. If your calling script handles
-# output differently (writes to a Table, returns variables, appends to a
-# CSV, etc.), DELETE or COMMENT OUT the lines from writeInfoLine through
-# the final appendInfoLine. Available variables for your own output:
+
+removeObject: onlyVoiceId, svPart, avqiV2signal
+
+# ============================================================================
+# PART 8 — Pre-format all numeric outputs (with rounding fix)
+# ============================================================================
+
+@roundFixed: cpps, 3
+cppsOut\$ = roundFixed.result\$
+@roundFixed: hnr, 2
+hnrOut\$ = roundFixed.result\$
+@roundFixed: shim, 2
+shimOut\$ = roundFixed.result\$
+@roundFixed: shdb, 3
+shdbOut\$ = roundFixed.result\$
+@roundFixed: slope, 3
+slopeOut\$ = roundFixed.result\$
+@roundFixed: tilt, 3
+tiltOut\$ = roundFixed.result\$
+@roundFixed: avqi, 2
+avqiOut\$ = roundFixed.result\$
+@roundFixed: durationSV, 3
+durationSVOut\$ = roundFixed.result\$
+@roundFixed: durationVoicedCS, 3
+durationVoicedCSOut\$ = roundFixed.result\$
+
+if v3Computable
+    @roundFixed: cppsV3, 3
+    cppsV3Out\$ = roundFixed.result\$
+    @roundFixed: hnrV3, 2
+    hnrV3Out\$ = roundFixed.result\$
+    @roundFixed: shimV3, 2
+    shimV3Out\$ = roundFixed.result\$
+    @roundFixed: shdbV3, 3
+    shdbV3Out\$ = roundFixed.result\$
+    @roundFixed: slopeV3, 3
+    slopeV3Out\$ = roundFixed.result\$
+    @roundFixed: tiltV3, 3
+    tiltV3Out\$ = roundFixed.result\$
+    @roundFixed: avqiV3, 2
+    avqiV3Out\$ = roundFixed.result\$
+endif
+
+# ============================================================================
+# PART 9 — Output (Info window + optional file mirror)
+# ============================================================================
+
+writeInfoLine: ""
+if finalOutputFile\$ <> ""
+    writeFile: finalOutputFile\$, ""
+endif
+
+@out: "========================================================================"
+@out: "                          AVQI ANALYSIS"
+@out: "========================================================================"
+@out: ""
+@out: "  AVQI v.02.06:  " + avqiOut\$
+if v3Computable
+    @out: "  AVQI v.03.01:  " + avqiV3Out\$
+elsif runV3
+    @out: "  AVQI v.03.01:  not computable (voiced continuous speech < 3 s)"
+endif
+@out: ""
+@out: "------------------------------------------------------------------------"
+@out: "  Analysis details"
+@out: "------------------------------------------------------------------------"
+@out: ""
+@out: "  Praat version:               " + praatVer\$
+@out: "  Sustained vowel mode:        " + svMode\$
+@out: "  Sustained vowel used:        " + durationSVOut\$ + " s"
+@out: "  Voiced continuous speech:    " + durationVoicedCSOut\$ + " s"
+@out: ""
+@out: "------------------------------------------------------------------------"
+@out: "  v.02.06 predictors  (full voiced continuous speech)"
+@out: "------------------------------------------------------------------------"
+@out: ""
+@out: "  CPPS         " + cppsOut\$ + " dB"
+@out: "  HNR          " + hnrOut\$ + " dB"
+@out: "  Shimmer %    " + shimOut\$
+@out: "  Shimmer dB   " + shdbOut\$ + " dB"
+@out: "  LTAS slope   " + slopeOut\$ + " dB"
+@out: "  LTAS tilt    " + tiltOut\$ + " dB"
+
+if v3Computable
+    @out: ""
+    @out: "------------------------------------------------------------------------"
+    @out: "  v.03.01 predictors  (first 3 s of voiced continuous speech)"
+    @out: "------------------------------------------------------------------------"
+    @out: ""
+    @out: "  CPPS         " + cppsV3Out\$ + " dB"
+    @out: "  HNR          " + hnrV3Out\$ + " dB"
+    @out: "  Shimmer %    " + shimV3Out\$
+    @out: "  Shimmer dB   " + shdbV3Out\$ + " dB"
+    @out: "  LTAS slope   " + slopeV3Out\$ + " dB"
+    @out: "  LTAS tilt    " + tiltV3Out\$ + " dB"
+endif
+
+@out: ""
+# --- Optional: Praat version caveat (safe to delete) ---
+@out: "------------------------------------------------------------------------"
+@out: "  Praat version note"
+@out: "------------------------------------------------------------------------"
+@out: ""
+@out: "  CPPS algorithm changes across Praat versions (6.1.37, 6.4.39,"
+@out: "  6.4.58). AVQI scores from different Praat versions are NOT"
+@out: "  directly comparable. Report the Praat version alongside every"
+@out: "  AVQI score."
+@out: ""
+# --- Optional: References block (safe to delete) ---
+@out: "------------------------------------------------------------------------"
+@out: "  Where to find population-specific cutoffs"
+@out: "------------------------------------------------------------------------"
+@out: ""
+@out: "  AVQI clinical thresholds vary by language, population, recording"
+@out: "  protocol, and Praat version. This script does not endorse a"
+@out: "  threshold. Consult the validation literature for your population:"
+@out: ""
+@out: "  Methodology and regression equations:"
+@out: "    Maryn, Y., & Weenink, D. (2015). Objective dysphonia measures"
+@out: "      in the program Praat: smoothed cepstral peak prominence and"
+@out: "      acoustic voice quality index. Journal of Voice, 29(1), 35-43."
+@out: "      https://doi.org/10.1016/j.jvoice.2014.06.015"
+@out: "    Barsties, B., & Maryn, Y. (2015). The improvement of internal"
+@out: "      consistency of the Acoustic Voice Quality Index. American"
+@out: "      Journal of Otolaryngology, 36(5), 647-656."
+@out: "      https://doi.org/10.1016/j.amjoto.2015.04.012"
+@out: ""
+@out: "  Cross-language threshold comparison:"
+@out: "    Maryn, Y., De Bodt, M., Barsties, B., & Roy, N. (2014). The"
+@out: "      value of the acoustic voice quality index as a measure of"
+@out: "      dysphonia severity in subjects speaking different languages."
+@out: "      European Archives of Oto-Rhino-Laryngology, 271(6), 1609-1619."
+@out: "      https://doi.org/10.1007/s00405-013-2730-7"
+@out: ""
+@out: "  Meta-analysis with cross-language threshold ranges:"
+@out: "    Jayakumar, T., & Benoy, J. J. (2024). Acoustic Voice Quality"
+@out: "      Index (AVQI) in the Measurement of Voice Quality: A Systematic"
+@out: "      Review and Meta-Analysis. Journal of Voice, 38(5), 1055-1069."
+@out: "      v.02 range 2.72-3.33 (7 studies); v.03 range 1.33-3.15 (8 studies)."
+@out: "      https://doi.org/10.1016/j.jvoice.2022.03.018"
+@out: ""
+@out: "  Representative recent single-language validation:"
+@out: "    Fantini, M., Ricci Maccarini, A., Firino, A., et al. (2023)."
+@out: "      Validation of the Acoustic Voice Quality Index (AVQI) Version"
+@out: "      03.01 in Italian. Journal of Voice, 37(4), 631.e1-631.e6."
+@out: "      https://doi.org/10.1016/j.jvoice.2021.02.029"
+@out: ""
+@out: "========================================================================"
+
+# Footer: report file output status (Info window only — not mirrored)
+if finalOutputFile\$ <> ""
+    appendInfoLine: ""
+    appendInfoLine: "Results saved to: ", finalOutputFile\$
+    if finalOutputFile\$ <> candidatePath\$
+        appendInfoLine: "  (requested path existed; saved with auto-numbered suffix)"
+    endif
+endif
+
+# ============================================================================
+# PROCEDURES
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# @out: line\$
+# ----------------------------------------------------------------------------
+# Writes a line to the Info window, and also to finalOutputFile\$ if
+# the user supplied an output path.
+# ----------------------------------------------------------------------------
+procedure out: .line\$
+    appendInfoLine: .line\$
+    if finalOutputFile\$ <> ""
+        appendFileLine: finalOutputFile\$, .line\$
+    endif
+endproc
+
+# ----------------------------------------------------------------------------
+# @resolveOutputPath: candidate\$
+# ----------------------------------------------------------------------------
+# Rule 27 overwrite protection. If the candidate path already exists,
+# append an ascending integer suffix (_2, _3, ...) to the basename
+# until a non-existing path is found. Handles paths with or without
+# a file extension.
+# Returns: .path\$ — the resolved (free) path to write to.
+# ----------------------------------------------------------------------------
+procedure resolveOutputPath: .candidate\$
+    .path\$ = .candidate\$
+    if fileReadable (.path\$)
+        .baseName\$ = .candidate\$
+        .extension\$ = ""
+        .dotPos = rindex (.candidate\$, ".")
+        if .dotPos > 0
+            .baseName\$ = left\$ (.candidate\$, .dotPos - 1)
+            .extension\$ = mid\$ (.candidate\$, .dotPos, length (.candidate\$) - .dotPos + 1)
+        endif
+        .suffix = 2
+        repeat
+            .path\$ = .baseName\$ + "_" + string\$ (.suffix) + .extension\$
+            .suffix = .suffix + 1
+        until not fileReadable (.path\$)
+    endif
+endproc
+
+# ----------------------------------------------------------------------------
+# @roundFixed: value, decimals
+# ----------------------------------------------------------------------------
+# Returns .result\$ = the value rounded to the specified number of
+# decimals, formatted via fixed\$. Compensates for IEEE 754 binary
+# representation errors that cause fixed\$ alone to round computed
+# values downward at decimal half-boundaries.
+# ----------------------------------------------------------------------------
+procedure roundFixed: .value, .decimals
+    .multiplier = 10 ^ .decimals
+    .result\$ = fixed\$ (round (.value * .multiplier) / .multiplier, .decimals)
+endproc
+
+# ----------------------------------------------------------------------------
+# @runAvqiPipeline: avqiId
+# ----------------------------------------------------------------------------
+# Computes the six AVQI predictors on a concatenated avqi Sound.
+# Returns .cpps, .hnr, .shim, .shdb, .slope, .tilt.
 #
-#   avqi        — AVQI v.02.06 score
-#   avqiV3      — AVQI v.03.01 score
-#   cpps, hnr, shim, shdb, slope, tilt — predictors
-#   durationVCS — voiced CS duration (s); ~3.0 = v.03.01 protocol compliant
-#   vCSDurationOK — boolean (1 if 2.5-3.5 s, 0 otherwise)
-#   extrapolationFlag — count of predictors outside clinical bounds
-#   praatVer\$   — Praat version string (affects CPPS algorithm vintage)
-# ============================================================================
+# Parameters are canonical Phonanium AVQI v.02.06 (APPENDIX_D §10).
+# HNR uses a dedicated Pitch object with 75 to 600 Hz range, NOT the
+# 50 to 400 Hz Pitch used internally by the shimmer step — matching
+# the canonical Phonanium script.
+# ----------------------------------------------------------------------------
+procedure runAvqiPipeline: .avqiId
+    # CPPS
+    selectObject: .avqiId
+    .cepstrogram = noprogress To PowerCepstrogram: 60, 0.002, 5000, 50
+    .cpps = Get CPPS: "no", 0.01, 0.001, 60, 330, 0.05, "Parabolic", 0.001, 0, "Straight", "Robust"
+    removeObject: .cepstrogram
 
-writeInfoLine: "AVQI Results"
-appendInfoLine: "Praat version: ", praatVer\$
-appendInfoLine: ""
-appendInfoLine: "vCS duration: ", fixed\$(durationVCS, 3), " s"
-if not vCSDurationOK
-    appendInfoLine: "  WARNING: outside 2.5-3.5 s expected by v.03.01 protocol."
-    appendInfoLine: "  Use syllable-controlled CS: Dutch=34, Italian=25, German/French=27,"
-    appendInfoLine: "  Japanese=30, Spanish=33, Korean=26, BR Portuguese=17 syllables."
-endif
-appendInfoLine: ""
-appendInfoLine: "Predictors:"
-appendInfoLine: "  CPPS:        ", fixed\$(cpps, 3), " dB"
-appendInfoLine: "  HNR:         ", fixed\$(hnr, 2), " dB"
-appendInfoLine: "  Shimmer %:   ", fixed\$(shim, 2)
-appendInfoLine: "  Shimmer dB:  ", fixed\$(shdb, 3), " dB"
-appendInfoLine: "  LTAS slope:  ", fixed\$(slope, 3), " dB"
-appendInfoLine: "  LTAS tilt:   ", fixed\$(tilt, 3), " dB"
-if extrapolationFlag > 0
-    appendInfoLine: "  (", extrapolationFlag, " predictor(s) outside typical clinical range — scores may extrapolate)"
-endif
-appendInfoLine: ""
-appendInfoLine: "AVQI v.02.06: ", fixed\$(avqi, 3)
-appendInfoLine: "AVQI v.03.01: ", fixed\$(avqiV3, 3)
-appendInfoLine: ""
-appendInfoLine: "Note: CPPS algorithm differs across Praat versions (changes at"
-appendInfoLine: "6.1.37, 6.4.39, 6.4.58). VOXplot pins Praat 6.0.48. AVQI scores"
-appendInfoLine: "computed in different Praat versions are NOT directly comparable."
+    # LTAS slope and tilt
+    selectObject: .avqiId
+    .ltas = noprogress To Ltas: 1
+    .slope = Get slope: 0, 1000, 1000, 10000, "energy"
+    .trendLine = noprogress Compute trend line: 1, 10000
+    .tilt = Get slope: 0, 1000, 1000, 10000, "energy"
+    removeObject: .trendLine, .ltas
 
-# Cleanup
-removeObject: avqiSignal
+    # Shimmer (local and local_dB) via PointProcess (periodic, cc) direct from Sound
+    selectObject: .avqiId
+    .ppShim = noprogress To PointProcess (periodic, cc): 50, 400
+    selectObject: .avqiId, .ppShim
+    .percentShimmer = Get shimmer (local): 0, 0, 0.0001, 0.02, 1.3, 1.6
+    .shim = .percentShimmer * 100
+    .shdb = Get shimmer (local_dB): 0, 0, 0.0001, 0.02, 1.3, 1.6
+    removeObject: .ppShim
 
-# ============================================================================
-# Procedure: checkZeros
-#
+    # HNR via Voice report with its own 75 to 600 Hz Pitch (canonical Phonanium)
+    selectObject: .avqiId
+    .pitchHnr = noprogress To Pitch (raw cross-correlation): 0, 75, 600, 15, "no", 0.03, 0.45, 0.01, 0.35, 0.14
+    selectObject: .avqiId, .pitchHnr
+    .ppHnr = noprogress To PointProcess (cc)
+    selectObject: .avqiId, .pitchHnr, .ppHnr
+    .voiceReport\$ = noprogress Voice report: 0, 0, 75, 600, 1.3, 1.6, 0.03, 0.45
+    .hnr = extractNumber (.voiceReport\$, "Mean harmonics-to-noise ratio: ")
+    removeObject: .pitchHnr, .ppHnr
+endproc
+
+# ----------------------------------------------------------------------------
+# @checkZeros: sndId, intermediateSamples
+# ----------------------------------------------------------------------------
 # Counts zero crossings within the middle 25 ms of a 30 ms window
-# (from 0.0025 s to 0.0275 s). The rate is normalised by the actual
-# measured distance between the first and last zero crossings in the
-# analysis range, not the nominal 25 ms — this replicates the canonical
+# (from 0.0025 s to 0.0275 s) and computes the rate in crossings per
+# second, normalised by the measured distance between first and last
+# crossings (not the nominal 25 ms). Replicates the canonical
 # Phonanium algorithm.
 #
-# Returns:
-#   .rate — zero crossings per second, or undefined if fewer than two
-#           crossings were found in the analysis range
-# ============================================================================
+# Returns .rate (undefined if fewer than two crossings).
+# ----------------------------------------------------------------------------
 procedure checkZeros: .sndId, .intermediateSamples
     selectObject: .sndId
     .start = 0.0025
@@ -270,9 +671,8 @@ procedure checkZeros: .sndId, .intermediateSamples
         .rate = undefined
     endif
 endproc
-
 ${0}]]></content>
     <tabTrigger>avqi</tabTrigger>
     <scope>source.praat</scope>
-    <description>AVQI v.02.06 + v.03.01 parallel analysis — independent implementation (Maryn & Weenink 2015; Barsties & Maryn 2015)</description>
+    <description>AVQI v.02.06 + v.03.01 analysis (Maryn &amp; Weenink 2015; Barsties &amp; Maryn 2015) — dialog-driven, dual-signal</description>
 </snippet>
