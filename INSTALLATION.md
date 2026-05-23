@@ -72,7 +72,7 @@ the pitch top parameter.
 | `Praat.tmPreferences` | Comment toggling and indent rules |
 | `praat_completions.py` | Autocomplete, hover popups, status bar hints |
 | `completions_data.json` | 2074 commands, 366 functions, 273 EML procedures |
-| `snippets/*.sublime-snippet` | 11 code snippets (type trigger word + Tab) |
+| `snippets/*.sublime-snippet` | 12 code snippets (type trigger word + Tab) |
 
 ## Snippets
 
@@ -88,7 +88,7 @@ the pitch top parameter.
 | `form` | form/endform block |
 | `beginpause` | beginPause/endPause block |
 | `batch` | batch file processing loop |
-| `avqi` | AVQI v02.06 analysis (Maryn & Corthals) |
+| `avqi` | AVQI v.02.06 + v.03.01 analysis (dialog-driven) |
 | `infoheader` | Info window header block |
 
 ## Autocomplete tips
