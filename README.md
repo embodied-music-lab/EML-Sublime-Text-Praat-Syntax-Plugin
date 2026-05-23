@@ -1,6 +1,6 @@
 # EML Sublime Text Praat Syntax Plugin
 
-**v0.8-beta.11** | May 2026
+**v0.8-beta.12** | May 2026
 
 A comprehensive Praat scripting environment for Sublime Text 4, providing syntax highlighting, intelligent autocomplete with parameter tables, hover documentation, and clinical voice analysis guidance.
 
