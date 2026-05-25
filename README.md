@@ -52,7 +52,7 @@ See `RELEASE_NOTES.md` for the change list and `GROUNDED_ARGUMENTS_AVQI_v0.8-bet
 ## Installation
 
 1. In Sublime Text: **Preferences → Browse Packages...**
-2. If a `Praat/` folder already exists (from another syntax highlighter), rename or zip it as a backup.
+2. If a `Praat/` folder already exists (from another syntax highlighter), delete it or zip it as a backup.
 3. Copy the `Praat/` folder from this archive into the `Packages/` directory.
 4. Open any `.praat` file — highlighting, autocomplete, and hover popups are active immediately.
 
