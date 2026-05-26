@@ -1,6 +1,6 @@
 # EML Sublime Text Praat Syntax Plugin
 
-**v0.8-beta.12** | May 2026
+**v0.8-beta.13** | May 2026
 
 A comprehensive Praat scripting environment for Sublime Text 4, providing syntax highlighting, intelligent autocomplete with parameter tables, hover documentation, and clinical voice analysis guidance.
 
@@ -8,26 +8,21 @@ Part of the [EML PraatGen](https://github.com/embodied-music-lab/PraatGen) proje
 
 ## What's new in this build
 
-**AVQI snippet rewritten** as a complete, dialog-driven analysis. The new `avqi` snippet computes the Acoustic Voice Quality Index v.02.06 (Maryn & Weenink, 2015) and optionally v.03.01 (Barsties & Maryn, 2015) from a paired sustained-vowel + continuous-speech recording.
+**Syntax highlighting fixes, legacy command support, and autocomplete additions.**
 
-Key changes vs. previous beta:
+- **Colon-syntax highlighting fixed.** Built-in functions used as commands with colon syntax (`selectObject:`, `removeObject:`, `appendInfoLine:`, etc.) now highlight correctly. The lookahead pattern previously required `(` or whitespace after the function name; it now also accepts `:`. Affects all 109 entries in the built-in function pattern.
+- **`clearinfo` and `select all` added** as commands (`support.function.praat` — blue). `clearinfo` was previously misclassified as control flow.
+- **`asynchronous` added** to keyword highlighting (command prefix, same class as `nocheck` and `noprogress`).
+- **Legacy/deprecated commands added** with `support.function.deprecated.praat` scope (blue, like their modern replacements): `echo`, `print`, `printline`, `execute`, `system`, `system_nocheck`. Themes can style `.deprecated` distinctly if desired.
+- **Autocomplete for all new commands.** Legacy commands appear in the completion list with deprecation notes and correct snippet insertion (space-separated args, not colon or parenthesized). `clearinfo` and `select all` insert without trailing syntax. `deleteFile:` added to colon-command completions.
 
-- **Settings dialog** at top of the snippet (commentable-out): banner header with `===` rule and a subtitle naming the required input protocol; `choice:` radio buttons for input source (mutually exclusive — "Read sv and cs from WAV files" vs. "sv and cs Sound objects selected"); file pickers below for the WAV-file path; dropdown for sustained-vowel selection mode (entire / middle 3 s / final 3 s, default *final 3 s*); checkbox to also compute v.03.01 with explanation block bracketed by `----` rules; **`folder:` + `sentence:` for output** (separate directory browser and filename text field; default behaviour is Info-window only; pick a folder to save a text mirror; Rule 27 overwrite protection auto-suffixes existing files with `_2`, `_3`, ...).
-- **Selection / file validation with retry popups.** Missing objects or unreadable paths produce a non-fatal popup with Continue/Quit, not an exit.
-- **Dual-signal v.03.01.** When v.03.01 is requested, a separate avqi signal is built from the first 3 s of voiced continuous speech plus the same sustained-vowel selection, and all six predictors are recomputed on it. v.02.06 always uses the full voiced continuous speech.
-- **Canonical voiced-segment extraction restored** (power threshold 30% + zero-crossing-rate < 3000/s on 30 ms windows). Previous beta used a simplified `Extract non-empty intervals` shortcut.
-- **HNR pipeline uses a dedicated 75 to 600 Hz Pitch object**, matching the canonical Phonanium script. Previous beta silently reused the 50 to 400 Hz shimmer Pitch for HNR, shifting HNR values.
-- **Rounding helper** (`@roundFixed`) compensates for an IEEE 754 representation issue that causes Praat's `fixed$` to round computed values like 6.606 (stored as 6.6049999...) down to 6.60 instead of up to 6.61.
-- **Info-window output reorganized.** AVQI scores lead the output under a banner header; predictors, analysis details, and a references block follow under sectional dividers. Jargon ("vCS", "SV", "CS") expanded throughout to "voiced continuous speech," "sustained vowel," and "continuous speech."
-- **Clinical norm/threshold language replaced with a references block.** The output no longer endorses a specific cutoff. A *Where to find population-specific cutoffs* block points to five AVQI validation references with DOIs (Maryn & Weenink, 2015; Barsties & Maryn, 2015; Maryn, De Bodt, Barsties, & Roy, 2014; Jayakumar & Benoy, 2024; Fantini et al., 2023).
-
-See `RELEASE_NOTES.md` for the change list and `GROUNDED_ARGUMENTS_AVQI_v0.8-beta.12.md` for the methodological rationale.
+See `RELEASE_NOTES.md` for the full change list.
 
 ## Features
 
-**2074 commands** with per-object-type parameter signatures, types, and defaults — sourced from Praat 6.4.65 and empirically verified.
+**2078 commands** with per-object-type parameter signatures, types, and defaults — sourced from Praat 6.4.65 and empirically verified.
 
-**366 functions** from the Formula engine with argument signatures and descriptions.
+**372 functions** from the Formula engine and scripting built-ins, with argument signatures and descriptions.
 
 **Intelligent autocomplete**
 - Type any distinctive word from a command name: `CPPS` finds `Get CPPS`, `burg` finds `To Formant (burg)`, `filtered` finds both filtered pitch variants.
@@ -52,7 +47,7 @@ See `RELEASE_NOTES.md` for the change list and `GROUNDED_ARGUMENTS_AVQI_v0.8-bet
 ## Installation
 
 1. In Sublime Text: **Preferences → Browse Packages...**
-2. If a `Praat/` folder already exists (from another syntax highlighter), delete it or zip it as a backup.
+2. If a `Praat/` folder already exists (from another syntax highlighter), rename or zip it as a backup.
 3. Copy the `Praat/` folder from this archive into the `Packages/` directory.
 4. Open any `.praat` file — highlighting, autocomplete, and hover popups are active immediately.
 
