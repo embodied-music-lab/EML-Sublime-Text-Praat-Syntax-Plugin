@@ -8,6 +8,19 @@
   - Sublime Text 3 is not supported.
 - **No additional packages or dependencies required.**
 
+### Optional: build system (run scripts with Ctrl-B / Cmd-B)
+
+The plugin includes a build system so you can run scripts directly from
+Sublime. It is optional — highlighting and autocomplete work without it.
+
+- **Praat 6.4.43 (14 September 2025) or later** for the default build,
+  which uses Praat's `--send-or-form` command-line switch.
+- **Praat 6.2.05 – 6.4.42:** change `--send-or-form` to `--send` in
+  `Praat/Praat.sublime-build` (you lose `form`-dialog support;
+  `beginPause` still works).
+- The syntax highlighting and autocomplete have no Praat version
+  requirement; this applies only to running scripts from Sublime.
+
 ## Installation
 
 ### 1. Locate your Sublime Text Packages folder
@@ -36,8 +49,10 @@ Your folder structure should look like:
 Packages/
 ├── Praat/
 │   ├── praat_completions.py
+│   ├── praat_build.py
 │   ├── completions_data.json
 │   ├── Praat.sublime-syntax
+│   ├── Praat.sublime-build
 │   ├── Praat.tmPreferences
 │   └── snippets/
 │       ├── avqi.sublime-snippet
@@ -69,9 +84,11 @@ the pitch top parameter.
 | File | Purpose |
 |------|---------|
 | `Praat.sublime-syntax` | Syntax highlighting for `.praat` files |
+| `Praat.sublime-build` | Build system — run scripts with Ctrl-B / Cmd-B (optional; Praat 6.4.43+) |
+| `praat_build.py` | Build target that saves the file before running (used by the build system) |
 | `Praat.tmPreferences` | Comment toggling and indent rules |
 | `praat_completions.py` | Autocomplete, hover popups, status bar hints |
-| `completions_data.json` | 2074 commands, 366 functions, 273 EML procedures |
+| `completions_data.json` | 2041 commands, 372 functions, 273 EML procedures |
 | `snippets/*.sublime-snippet` | 12 code snippets (type trigger word + Tab) |
 
 ## Snippets
@@ -100,6 +117,57 @@ the pitch top parameter.
 - **Hover** over any command for the full parameter table with types
   and defaults. Clinical commands include usage notes.
 - **Status bar** shows the current parameter name as you type arguments.
+
+## Running scripts with Ctrl-B / Cmd-B (optional)
+
+The plugin includes a build system so you can run the script you're
+editing directly in Praat — no copy-paste into Praat's script editor.
+
+**Requirement:** Praat 6.4.43 or later (see Requirements above).
+
+### One-time setup — set your Praat path
+
+Open `Packages/Praat/Praat.sublime-build` and edit the path for your OS:
+
+| Platform | Default path in the build file |
+|----------|--------------------------------|
+| macOS    | `/Applications/Praat.app/Contents/MacOS/Praat` |
+| Windows  | `C:\Program Files\Praat.exe` |
+| Linux    | `praat` (assumes it is on your PATH) |
+
+The macOS default is usually correct. Windows and Linux users may need
+to point it at their actual Praat location.
+
+### Use it
+
+1. Keep Praat open. The default build sends your script to the running
+   Praat instance.
+2. Open a `.praat` file in Sublime and press **Ctrl-B** (Windows/Linux)
+   or **Cmd-B** (macOS). The build saves the file automatically before
+   running, so you don't need to save first.
+3. The script runs in Praat. Dialogs, `form`, `beginPause`, the demo
+   window, editors, and playback all work, because the script runs
+   inside your live Praat — switch to the Praat window to answer any
+   dialogs.
+
+If Ctrl-B does nothing, check that **Tools → Build System** is set to
+**Automatic** or **Praat**.
+
+### Headless variant (advanced)
+
+Press Ctrl-Shift-B (Cmd-Shift-B on macOS) and choose **Run headless
+(batch)** to run the script as a self-contained batch process, with
+output in Sublime's panel. This is faster and needs no open Praat, but
+it **cannot show any dialogs** — it is only safe for fully
+non-interactive, argument-driven scripts. In batch mode `beginPause`
+silently halts the script, `pauseScript` is skipped, file pickers
+return empty strings, and `View & Edit` / demo-window commands abort.
+For anything with a `form`, `beginPause`, file picker, editor, or demo
+window, use the default build.
+
+The build system was contributed at the suggestion of Jörg Mayer and is
+adapted from his SublimePraat plugin (https://praatpfanne.lingphon.net).
+GPL-3.0-or-later.
 
 ## Updating
 

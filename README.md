@@ -1,6 +1,6 @@
 # EML Sublime Text Praat Syntax Plugin
 
-**v0.8-beta.13a** | May 2026
+**v0.9-beta.1** | June 2026
 
 A comprehensive Praat scripting environment for Sublime Text 4, providing syntax highlighting, intelligent autocomplete with parameter tables, hover documentation, and clinical voice analysis guidance.
 
@@ -8,8 +8,10 @@ Part of the [EML PraatGen](https://github.com/embodied-music-lab/PraatGen) proje
 
 ## What's new in this build
 
-**Syntax highlighting fixes, legacy command support, and autocomplete additions.**
+**Build system — run Praat scripts from Sublime with Ctrl-B / Cmd-B — plus syntax highlighting fixes, legacy command support, and autocomplete additions.**
 
+- **Build system added.** A new `Praat.sublime-build` runs the script you're editing directly in Praat — no copy-paste into Praat's script editor. The default build sends to your open Praat (so `form`, `beginPause`, the demo window, editors, and playback all work); a headless variant runs batch scripts with output in Sublime's panel. Requires Praat 6.4.43+ for the default build. Adapted from Jörg Mayer's SublimePraat plugin, contributed at his suggestion.
+- **Removed 39 menu-header artifacts from autocomplete.** Submenu labels ending in ` -` (`Draw -`, `Query -`, `Modify -`, etc.) had been swept in from the catalogue's menu tree and appeared as uninsertable completions. These were never real commands; the genuine commands they grouped (e.g. `Draw`, the `Scatter plot where` family) are unaffected. Command count: 2080 → 2041.
 - **Colon-syntax highlighting fixed.** Built-in functions used as commands with colon syntax (`selectObject:`, `removeObject:`, `appendInfoLine:`, etc.) now highlight correctly. The lookahead pattern previously required `(` or whitespace after the function name; it now also accepts `:`. Affects all 109 entries in the built-in function pattern.
 - **`clearinfo` and `select all` added** as commands (`support.function.praat` — blue). `clearinfo` was previously misclassified as control flow.
 - **`asynchronous` added** to keyword highlighting (command prefix, same class as `nocheck` and `noprogress`).
@@ -20,7 +22,7 @@ See `RELEASE_NOTES.md` for the full change list.
 
 ## Features
 
-**2078 commands** with per-object-type parameter signatures, types, and defaults — sourced from Praat 6.4.65 and empirically verified.
+**2041 commands** with per-object-type parameter signatures, types, and defaults — sourced from Praat 6.4.65 and empirically verified.
 
 **372 functions** from the Formula engine and scripting built-ins, with argument signatures and descriptions.
 
@@ -39,10 +41,21 @@ See `RELEASE_NOTES.md` for the full change list.
 
 **Status bar hints** showing the current parameter name as you type arguments.
 
+**Run scripts from the editor (Ctrl-B / Cmd-B)** — a build system runs the script you're editing directly in Praat, no copy-paste into Praat's script editor. The file is saved automatically before running. The default build sends to your open Praat, so dialogs, `form`/`beginPause`, the demo window, editors, and playback all work. Requires Praat 6.4.43+ (see Requirements). Adapted from Jörg Mayer's SublimePraat plugin.
+
 ## Requirements
 
-- Sublime Text 4, Build 4075 or later
+> The plugin has **two independent layers** with **different version requirements.**
+
+**Plugin** — syntax highlighting, autocomplete, hover docs
+- **Sublime Text 4, Build 4075 or later** (Sublime Text 3 is *not* supported)
 - No additional packages or dependencies
+- Works with **any** version of Praat — the plugin does not launch Praat itself
+
+**Build system** *(optional)* — run scripts from Sublime with Ctrl-B / Cmd-B
+- **Praat 6.4.43 (14 September 2025) or later** for the default build, which uses Praat's `--send-or-form` command-line switch
+- **Praat 6.2.05 – 6.4.42:** still works if you switch the build to `--send` (you lose `form`-dialog support; `beginPause` still works) — see `INSTALLATION.md`
+- Not required for highlighting or autocomplete — those work without it
 
 ## Installation
 
@@ -50,6 +63,7 @@ See `RELEASE_NOTES.md` for the full change list.
 2. If a `Praat/` folder already exists (from another syntax highlighter), rename or zip it as a backup.
 3. Copy the `Praat/` folder from this archive into the `Packages/` directory.
 4. Open any `.praat` file — highlighting, autocomplete, and hover popups are active immediately.
+5. *(Optional)* To run scripts with Ctrl-B / Cmd-B, set your Praat path in `Praat/Praat.sublime-build` — see `INSTALLATION.md`.
 
 See `INSTALLATION.md` for detailed instructions with platform-specific paths.
 
@@ -86,6 +100,8 @@ See `INSTALLATION.md` for detailed instructions with platform-specific paths.
 **Code generation:** Ian Howell with PraatGen / Claude (Anthropic)
 
 **Clinical parameters:** Praat defaults by Paul Boersma; CPPS parameters per Maryn & Weenink (2015); AVQI v.02.06 per Maryn & Weenink (2015); AVQI v.03.01 per Barsties & Maryn (2015).
+
+**Build system:** adapted from Jörg Mayer's SublimePraat plugin ([praatpfanne.lingphon.net](https://praatpfanne.lingphon.net)), contributed at his suggestion. GPL-3.0-or-later.
 
 **Command database:** Empirically verified against Praat 6.4.65 via the v6 sweep infrastructure (3086 command-host pairs probed). Dropdown options verified against Praat 6.4.65 via the v0.4 verification pipeline harness; v0.8-beta.4 build spot-checked against Praat 6.4.66; v0.8-beta.12 AVQI snippet end-to-end-verified in Praat 6.4.67.
 
