@@ -52110,6 +52110,75 @@
         ],
         "_source": "manual-add-v0.8-beta.9"
       }
+    ],
+    "select all": [
+      {
+        "object_types": [
+          "Universal"
+        ],
+        "params": [],
+        "_source": "manual-add-v0.8-beta.13"
+      }
+    ],
+    "Get end point": [
+      {
+        "object_types": [
+          "TextGrid"
+        ],
+        "params": [
+          {
+            "type": "NATURAL",
+            "label": "Tier number",
+            "default": "1"
+          },
+          {
+            "type": "NATURAL",
+            "label": "Point number",
+            "default": "1"
+          }
+        ],
+        "_source": "catalogue-alias-v0.8-beta.13"
+      }
+    ],
+    "Get start point": [
+      {
+        "object_types": [
+          "TextGrid"
+        ],
+        "params": [
+          {
+            "type": "NATURAL",
+            "label": "Tier number",
+            "default": "1"
+          },
+          {
+            "type": "NATURAL",
+            "label": "Point number",
+            "default": "1"
+          }
+        ],
+        "_source": "catalogue-alias-v0.8-beta.13"
+      }
+    ],
+    "Get starting point": [
+      {
+        "object_types": [
+          "TextGrid"
+        ],
+        "params": [
+          {
+            "type": "NATURAL",
+            "label": "Tier number",
+            "default": "1"
+          },
+          {
+            "type": "NATURAL",
+            "label": "Point number",
+            "default": "1"
+          }
+        ],
+        "_source": "catalogue-alias-v0.8-beta.13"
+      }
     ]
   },
   "functions": [
@@ -52132,26 +52201,6 @@
       "name": "appDay",
       "args": "",
       "desc": "the month day at which the present version of Praat was built"
-    },
-    {
-      "name": "appendFile",
-      "args": "filePath$, ...",
-      "desc": "write texts, numbers, vectors and so on at the end of an existing file (create such a file if it does not exist yet)"
-    },
-    {
-      "name": "appendFileLine",
-      "args": "filePath$, ...",
-      "desc": "write texts, numbers, vectors and so on, followed by a newline, at the end of an existing file (create such a file if it does not exist yet)"
-    },
-    {
-      "name": "appendInfo",
-      "args": "...",
-      "desc": "write texts, numbers, vectors and so on, to the Info window"
-    },
-    {
-      "name": "appendInfoLine",
-      "args": "...",
-      "desc": "write texts, numbers, vectors and so on, followed by a newline, to the Info window"
     },
     {
       "name": "appMonth",
@@ -52177,6 +52226,26 @@
       "name": "appYear",
       "args": "",
       "desc": "the year in which the present version of Praat was built"
+    },
+    {
+      "name": "appendFile",
+      "args": "filePath$, ...",
+      "desc": "write texts, numbers, vectors and so on at the end of an existing file (create such a file if it does not exist yet)"
+    },
+    {
+      "name": "appendFileLine",
+      "args": "filePath$, ...",
+      "desc": "write texts, numbers, vectors and so on, followed by a newline, at the end of an existing file (create such a file if it does not exist yet)"
+    },
+    {
+      "name": "appendInfo",
+      "args": "...",
+      "desc": "write texts, numbers, vectors and so on, to the Info window"
+    },
+    {
+      "name": "appendInfoLine",
+      "args": "...",
+      "desc": "write texts, numbers, vectors and so on, followed by a newline, to the Info window"
     },
     {
       "name": "arccos",
@@ -52309,6 +52378,11 @@
       "desc": "incomplete beta function"
     },
     {
+      "name": "between#",
+      "args": "v#",
+      "desc": "differences between consecutive elements"
+    },
+    {
       "name": "between_by#",
       "args": "low, high, step",
       "desc": "symmetrically dispersed numbers between low and high, in steps of step"
@@ -52349,6 +52423,11 @@
       "desc": "center (or centre) of gravity"
     },
     {
+      "name": "center#",
+      "args": "v#",
+      "desc": "center vector by subtracting mean"
+    },
+    {
       "name": "chiSquareP",
       "args": "chiSquare, df",
       "desc": "area under the χ² curve up to chiSquare"
@@ -52359,14 +52438,14 @@
       "desc": "area under the χ² curve after chiSquare"
     },
     {
-      "name": "chooseFolder$",
-      "args": "title$",
-      "desc": "pops up a folder selection window"
-    },
-    {
       "name": "chooseDirectory$",
       "args": "title$",
       "desc": "pops up a directory selection window"
+    },
+    {
+      "name": "chooseFolder$",
+      "args": "title$",
+      "desc": "pops up a folder selection window"
     },
     {
       "name": "chooseReadFile$",
@@ -52394,14 +52473,14 @@
       "desc": "the column number (of the current cell) in a Formula command"
     },
     {
-      "name": "col$",
-      "args": "",
-      "desc": "the name of column i of an object"
-    },
-    {
       "name": "col#",
       "args": "matrix##, columnNumber",
       "desc": "extract one column from a matrix"
+    },
+    {
+      "name": "col$",
+      "args": "",
+      "desc": "the name of column i of an object"
     },
     {
       "name": "columnSums#",
@@ -52449,14 +52528,19 @@
       "desc": "hyperbolic cosine of each cell of matrix##"
     },
     {
+      "name": "createDirectory",
+      "args": "path$",
+      "desc": "create a new directory"
+    },
+    {
       "name": "createFolder",
       "args": "folderPath$",
       "desc": "create a new folder, or do nothing if it already exists"
     },
     {
-      "name": "createDirectory",
-      "args": "path$",
-      "desc": "create a new directory"
+      "name": "date#",
+      "args": "",
+      "desc": "current local date and time in the form { 2021, 11, 8, 16, 32, 42 }"
     },
     {
       "name": "date$",
@@ -52469,9 +52553,9 @@
       "desc": "current local date and time in the form \"2021-11-08T16:32:42+01:00\""
     },
     {
-      "name": "date#",
+      "name": "date_utc#",
       "args": "",
-      "desc": "current local date and time in the form { 2021, 11, 8, 16, 32, 42 }"
+      "desc": "current standard date and time in the form { 2021, 11, 8, 15, 32, 42 }"
     },
     {
       "name": "date_utc$",
@@ -52482,11 +52566,6 @@
       "name": "date_utc_iso$",
       "args": "",
       "desc": "current standard date and time in the form \"2021-11-08T15:32:42Z\""
-    },
-    {
-      "name": "date_utc#",
-      "args": "",
-      "desc": "current standard date and time in the form { 2021, 11, 8, 15, 32, 42 }"
     },
     {
       "name": "defaultDirectory$",
@@ -52589,6 +52668,17 @@
       "desc": "execute a menu command with arguments, capturing string return value"
     },
     {
+      "name": "echo",
+      "args": "...",
+      "desc": "clear the Info window and write a line (deprecated; use writeInfoLine:)",
+      "_deprecated": true
+    },
+    {
+      "name": "editor",
+      "args": "...",
+      "desc": "enter an editor environment (usually found inside a script)"
+    },
+    {
       "name": "empty$#",
       "args": "numberOfStrings",
       "desc": "create an array of empty strings"
@@ -52657,6 +52747,12 @@
       "name": "evaluate_nocheck$",
       "args": "...",
       "desc": "evaluate an expression string; suppress errors, return empty string on failure"
+    },
+    {
+      "name": "execute",
+      "args": "filePath$",
+      "desc": "run an external Praat script (deprecated; use runScript:)",
+      "_deprecated": true
     },
     {
       "name": "exitScript",
@@ -52944,14 +53040,14 @@
       "desc": "number of Unicode characters in string$"
     },
     {
-      "name": "linear$",
-      "args": "number, precision",
-      "desc": "format a number as a string"
-    },
-    {
       "name": "linear#",
       "args": "xmin, xmax, n",
       "desc": "vector of n equally spaced values from xmin to xmax"
+    },
+    {
+      "name": "linear$",
+      "args": "number, precision",
+      "desc": "format a number as a string"
     },
     {
       "name": "ln",
@@ -52979,21 +53075,6 @@
       "desc": "logarithm of the Γ function"
     },
     {
-      "name": "log2",
-      "args": "x",
-      "desc": "logarithm, base 2"
-    },
-    {
-      "name": "log2#",
-      "args": "vector#",
-      "desc": "base-2 logarithm of each element of vector#"
-    },
-    {
-      "name": "log2##",
-      "args": "matrix##",
-      "desc": "base-2 logarithm of each cell of matrix##"
-    },
-    {
       "name": "log10",
       "args": "x",
       "desc": "logarithm, base 10"
@@ -53009,14 +53090,29 @@
       "desc": "base-10 logarithm of each cell of matrix##"
     },
     {
-      "name": "lowerCase$",
-      "args": "string$",
-      "desc": "turns all capitals into lower case"
+      "name": "log2",
+      "args": "x",
+      "desc": "logarithm, base 2"
+    },
+    {
+      "name": "log2#",
+      "args": "vector#",
+      "desc": "base-2 logarithm of each element of vector#"
+    },
+    {
+      "name": "log2##",
+      "args": "matrix##",
+      "desc": "base-2 logarithm of each cell of matrix##"
     },
     {
       "name": "lowerCamelCase$",
       "args": "string$",
       "desc": "convert string to lowerCamelCase"
+    },
+    {
+      "name": "lowerCase$",
+      "args": "string$",
+      "desc": "turns all capitals into lower case"
     },
     {
       "name": "lowerCaseAppName$",
@@ -53244,19 +53340,21 @@
       "desc": "the Praat preferences directory"
     },
     {
+      "name": "print",
+      "args": "...",
+      "desc": "write text to the Info window without a newline (deprecated; use writeInfo:)",
+      "_deprecated": true
+    },
+    {
+      "name": "printline",
+      "args": "...",
+      "desc": "write text to the Info window with a newline (deprecated; use appendInfoLine:)",
+      "_deprecated": true
+    },
+    {
       "name": "procedure",
       "args": "",
       "desc": "start a procedure definition (form without colon also valid)"
-    },
-    {
-      "name": "random_initializeSafelyAndUnpredictably",
-      "args": "",
-      "desc": "undoes the effects of the following function"
-    },
-    {
-      "name": "random_initializeWithSeedUnsafelyButPredictably",
-      "args": "seed",
-      "desc": "reproducible sequence of random numbers"
     },
     {
       "name": "randomBernoulli",
@@ -53344,14 +53442,19 @@
       "desc": "nrow × ncol independent uniformly distributed random numbers"
     },
     {
+      "name": "random_initializeSafelyAndUnpredictably",
+      "args": "",
+      "desc": "undoes the effects of the following function"
+    },
+    {
+      "name": "random_initializeWithSeedUnsafelyButPredictably",
+      "args": "seed",
+      "desc": "reproducible sequence of random numbers"
+    },
+    {
       "name": "readFile",
       "args": "filePath$",
       "desc": "read a number from a text file"
-    },
-    {
-      "name": "readFile$",
-      "args": "filePath$",
-      "desc": "read a whole text file into a string"
     },
     {
       "name": "readFile#",
@@ -53362,6 +53465,11 @@
       "name": "readFile##",
       "args": "filePath$",
       "desc": "read a matrix from a text file"
+    },
+    {
+      "name": "readFile$",
+      "args": "filePath$",
+      "desc": "read a whole text file into a string"
     },
     {
       "name": "readLinesFromFile$#",
@@ -53444,14 +53552,14 @@
       "desc": "the row number (of the current cell) in a Formula command"
     },
     {
-      "name": "row$",
-      "args": "",
-      "desc": "the name of row i of an object"
-    },
-    {
       "name": "row#",
       "args": "matrix##, rowNumber",
       "desc": "extract one row from a matrix"
+    },
+    {
+      "name": "row$",
+      "args": "",
+      "desc": "the name of row i of an object"
     },
     {
       "name": "rowInners#",
@@ -53504,14 +53612,14 @@
       "desc": "run a system command; suppress errors"
     },
     {
+      "name": "selectObject",
+      "args": "...",
+      "desc": "select object(s) in the list by ID and/or full name"
+    },
+    {
       "name": "selected",
       "args": "",
       "desc": "the ID of the topmost selected object"
-    },
-    {
-      "name": "selected$",
-      "args": "",
-      "desc": "the full name (type + given name) of the topmost selected object"
     },
     {
       "name": "selected#",
@@ -53519,14 +53627,14 @@
       "desc": "the IDs of all selected objects"
     },
     {
+      "name": "selected$",
+      "args": "",
+      "desc": "the full name (type + given name) of the topmost selected object"
+    },
+    {
       "name": "selected$#",
       "args": "",
       "desc": "the full names of all selected objects"
-    },
-    {
-      "name": "selectObject",
-      "args": "...",
-      "desc": "select object(s) in the list by ID and/or full name"
     },
     {
       "name": "semitonesToHertz",
@@ -53744,6 +53852,18 @@
       "desc": "Σ"
     },
     {
+      "name": "system",
+      "args": "...",
+      "desc": "run a system command (deprecated; use runSystem:)",
+      "_deprecated": true
+    },
+    {
+      "name": "system_nocheck",
+      "args": "...",
+      "desc": "run a system command, ignoring errors (deprecated; use runSystem_nocheck:)",
+      "_deprecated": true
+    },
+    {
       "name": "tab$",
       "args": "",
       "desc": "the tab character (predefined string variable)"
@@ -53927,21 +54047,6 @@
       "name": "zero##",
       "args": "nrow, ncol",
       "desc": "matrix with nrow × ncol elements that are all 0"
-    },
-    {
-      "name": "editor",
-      "args": "...",
-      "desc": "enter an editor environment (usually found inside a script)"
-    },
-    {
-      "name": "between#",
-      "args": "v#",
-      "desc": "differences between consecutive elements"
-    },
-    {
-      "name": "center#",
-      "args": "v#",
-      "desc": "center vector by subtracting mean"
     }
   ],
   "function_signatures": {
@@ -54159,7 +54264,7 @@
     },
     "clearinfo": {
       "args": "",
-      "desc": "clear the Info window (no parentheses, no arguments)"
+      "desc": "clear the Info window (standalone command, no colon, no arguments)"
     },
     "clock": {
       "args": "",
@@ -55458,6 +55563,30 @@
     "center#": {
       "args": "v#",
       "desc": "center vector by subtracting mean"
+    },
+    "echo": {
+      "args": "...",
+      "desc": "clear Info window and write a line (deprecated; use writeInfoLine:)"
+    },
+    "execute": {
+      "args": "filePath$",
+      "desc": "run an external script (deprecated; use runScript:)"
+    },
+    "print": {
+      "args": "...",
+      "desc": "write to Info window without newline (deprecated; use writeInfo:)"
+    },
+    "printline": {
+      "args": "...",
+      "desc": "write to Info window with newline (deprecated; use appendInfoLine:)"
+    },
+    "system": {
+      "args": "...",
+      "desc": "run a system command (deprecated; use runSystem:)"
+    },
+    "system_nocheck": {
+      "args": "...",
+      "desc": "run a system command, ignore errors (deprecated; use runSystem_nocheck:)"
     }
   },
   "procedures": [
