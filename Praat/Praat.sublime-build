@@ -1,0 +1,72 @@
+{
+	// ========================================================================
+	// EML PraatGen — Sublime Text build system
+	// ========================================================================
+	// Press Ctrl-B (Windows/Linux) or Cmd-B (macOS) to run the Praat script
+	// you are editing — no need to copy it into Praat's own script editor.
+	//
+	// Contributed at the suggestion of, and adapted from, Jörg Mayer's
+	// SublimePraat plugin (https://praatpfanne.lingphon.net). GPL-3.0-or-later.
+	//
+	// ---- PRAAT VERSION REQUIRED (build system only) ----
+	//   Default build (--send-or-form): Praat 6.4.43 (14 Sep 2025) or later.
+	//   Older Praat 6.2.05 - 6.4.42:    change "--send-or-form" to "--send"
+	//                                   in all three cmd lines below. You lose
+	//                                   form-dialog support; beginPause still
+	//                                   works.
+	//   The syntax-highlighting / autocomplete plugin itself has NO Praat
+	//   version requirement — this floor applies only to running scripts.
+	//
+	// ---- TWO THINGS TO ADJUST ----
+	//   1. The Praat binary path for your OS (see each block below).
+	//   2. "selector" must match the plugin's syntax scope. For this plugin
+	//      it is "source.praat" — already correct, leave as-is.
+	//
+	// ---- DEFAULT BUILD ("--send-or-form") ----
+	//   Saves the current file first (via the praat_build target, see
+	//   praat_build.py), then sends the script to your already-open Praat. Full windows, Play,
+	//   editors, demo window, beginPause, AND forms all work. Errors appear
+	//   in Praat's own dialog (not the Sublime panel). Keep Praat running.
+	//
+	// ---- VARIANT ("Run headless") ----
+	//   Self-contained batch process. Info -> Sublime panel, errors -> stderr
+	//   (clickable via file_regex). Does not need Praat open.
+	//   USE ONLY FOR NON-INTERACTIVE, ARGUMENT-DRIVEN SCRIPTS. In batch:
+	//     - pauseScript is silently skipped
+	//     - beginPause/endPause SILENTLY HALTS the script (exit 0, no error)
+	//     - chooseReadFile$ / chooseFolder$ return empty strings
+	//     - View & Edit / editor: blocks abort ("Cannot edit from batch")
+	//     - demo window aborts Praat
+	//     - form fields auto-fill from command-line args (not shown)
+	//   For any interactive / demo / editor / Picture script, use the default
+	//   build above, not this variant.
+	// ========================================================================
+
+	"target": "praat_build",
+	"cancel": {"kill": true},
+
+	"selector": "source.praat",
+	"working_dir": "$file_path",
+
+	"osx": {
+		"cmd": ["/Applications/Praat.app/Contents/MacOS/Praat", "--send-or-form", "$file"]
+	},
+	"linux": {
+		// Assumes 'praat' is on your PATH; otherwise give the full path.
+		"cmd": ["praat", "--send-or-form", "$file"]
+	},
+	"windows": {
+		"cmd": ["C:\\Program Files\\Praat.exe", "--send-or-form", "$file"]
+	},
+
+	"variants": [
+		{
+			"name": "Run headless (batch)",
+			// Confirm this regex against a real batch error on your setup.
+			"file_regex": "line ([0-9]+) (?:not completed|.*):",
+			"osx":     { "cmd": ["/Applications/Praat.app/Contents/MacOS/Praat", "--run", "$file"] },
+			"linux":   { "cmd": ["praat", "--run", "$file"] },
+			"windows": { "cmd": ["C:\\Program Files\\Praat.exe", "--run", "$file"] }
+		}
+	]
+}

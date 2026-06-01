@@ -1098,124 +1098,6 @@
         "_source": "catalogue"
       }
     ],
-    "Modify -": [
-      {
-        "object_types": [
-          "Sound",
-          "Pitch",
-          "Spectrum",
-          "Spectrogram",
-          "Formant",
-          "FormantPath",
-          "Intensity",
-          "PointProcess",
-          "PowerCepstrogram",
-          "TextGrid",
-          "Matrix",
-          "Strings",
-          "IntensityTier",
-          "PitchTier",
-          "DurationTier",
-          "AmplitudeTier",
-          "Manipulation",
-          "FormantGrid",
-          "Polygon",
-          "Categories",
-          "DTW",
-          "DataModeler",
-          "Discriminant",
-          "EEG",
-          "ERP",
-          "ERPTier",
-          "EditCostsTable",
-          "Eigen",
-          "FormantModeler",
-          "FormantTier",
-          "GaussianMixture",
-          "HMM",
-          "Network",
-          "PCA",
-          "PatternList",
-          "Permutation",
-          "Photo",
-          "PowerCepstrum",
-          "RealTier",
-          "Roots",
-          "SpeechSynthesizer",
-          "TextGridNavigator",
-          "TextTier",
-          "Universal",
-          "VocalTractTier"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
-    "Query -": [
-      {
-        "object_types": [
-          "Sound",
-          "Pitch",
-          "Spectrum",
-          "Spectrogram",
-          "Formant",
-          "FormantPath",
-          "Intensity",
-          "Harmonicity",
-          "PointProcess",
-          "PowerCepstrogram",
-          "TextGrid",
-          "Matrix",
-          "Strings",
-          "IntensityTier",
-          "PitchTier",
-          "DurationTier",
-          "AmplitudeTier",
-          "Ltas",
-          "Polygon",
-          "BarkSpectrogram",
-          "Categories",
-          "CubeGrid",
-          "DTW",
-          "DataModeler",
-          "Discriminant",
-          "EEG",
-          "ERP",
-          "ERPTier",
-          "EditCostsTable",
-          "Eigen",
-          "Excitation",
-          "FileInMemorySet",
-          "FormantModeler",
-          "FormantTier",
-          "GaussianMixture",
-          "HMM",
-          "LongSound",
-          "MelSpectrogram",
-          "Network",
-          "NoulliGrid",
-          "OTGrammar",
-          "OTGrammar & Strings",
-          "OTMulti",
-          "PCA",
-          "Permutation",
-          "PowerCepstrum",
-          "RealTier",
-          "ResultsMFC",
-          "Roots",
-          "SVD",
-          "SpeechRecognizer",
-          "SpeechSynthesizer",
-          "StringsIndex",
-          "TextGridNavigator",
-          "TextTier",
-          "Universal",
-          "VocalTractTier"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
     "Synthesize": [
       {
         "object_types": [
@@ -3523,39 +3405,6 @@
         "_source": "catalogue"
       }
     ],
-    "Draw -": [
-      {
-        "object_types": [
-          "Sound",
-          "Pitch",
-          "Spectrum",
-          "Spectrogram",
-          "Formant",
-          "TextGrid",
-          "Matrix",
-          "Polygon",
-          "BarkSpectrogram",
-          "ComplexSpectrogram",
-          "CubeGrid",
-          "DTW",
-          "Discriminant",
-          "ERP",
-          "Eigen",
-          "FormantModeler",
-          "FormantTier",
-          "KlattGrid",
-          "MelSpectrogram",
-          "NoulliGrid",
-          "OTMulti",
-          "PCA",
-          "Photo",
-          "Pitch & TextGrid",
-          "Universal"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
     "Draw Sekey-Hanson auditory filters": [
       {
         "object_types": [
@@ -5231,15 +5080,6 @@
         "_source": "catalogue"
       }
     ],
-    "Match configurations -": [
-      {
-        "object_types": [
-          "Configuration"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
     "Normalize": [
       {
         "object_types": [
@@ -5842,15 +5682,6 @@
             "default": "0.5"
           }
         ],
-        "_source": "catalogue"
-      }
-    ],
-    "To Proximity -": [
-      {
-        "object_types": [
-          "Confusion"
-        ],
-        "params": [],
         "_source": "catalogue"
       }
     ],
@@ -8626,21 +8457,6 @@
         "_source": "catalogue"
       }
     ],
-    "Extract -": [
-      {
-        "object_types": [
-          "Discriminant",
-          "ERPTier & Table",
-          "GaussianMixture",
-          "HMM",
-          "PCA",
-          "Photo",
-          "Sound & TextGrid"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
     "Extract between-groups SSCP": [
       {
         "object_types": [
@@ -9320,21 +9136,6 @@
         "object_types": [
           "Dissimilarity",
           "TableOfReal"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
-    "Analyse -": [
-      {
-        "object_types": [
-          "Pitch",
-          "Spectrum",
-          "Spectrogram",
-          "PointProcess",
-          "Distance",
-          "ERP",
-          "Similarity"
         ],
         "params": [],
         "_source": "catalogue"
@@ -10193,18 +9994,6 @@
         "_source": "catalogue"
       }
     ],
-    "Hack -": [
-      {
-        "object_types": [
-          "Spectrogram",
-          "Polygon",
-          "EEG",
-          "ERP"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
     "Remove channel": [
       {
         "object_types": [
@@ -10768,15 +10557,6 @@
             "default": "4"
           }
         ],
-        "_source": "catalogue"
-      }
-    ],
-    "To ERPTier -": [
-      {
-        "object_types": [
-          "EEG"
-        ],
-        "params": [],
         "_source": "catalogue"
       }
     ],
@@ -12484,22 +12264,6 @@
             "_default_raw": ""
           }
         ],
-        "_source": "catalogue"
-      }
-    ],
-    "Tabulate -": [
-      {
-        "object_types": [
-          "Spectrum",
-          "Formant",
-          "FormantPath",
-          "PowerCepstrogram",
-          "TextGrid",
-          "ERP",
-          "Network",
-          "SpectrumTier"
-        ],
-        "params": [],
         "_source": "catalogue"
       }
     ],
@@ -15045,21 +14809,6 @@
       {
         "object_types": [
           "KlattGrid"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
-    "Convert -": [
-      {
-        "object_types": [
-          "Sound",
-          "Pitch",
-          "Spectrum",
-          "PointProcess",
-          "Strings",
-          "PitchTier",
-          "FormantGrid"
         ],
         "params": [],
         "_source": "catalogue"
@@ -17956,15 +17705,6 @@
         "_source": "catalogue"
       }
     ],
-    "Edit filters -": [
-      {
-        "object_types": [
-          "KlattGrid"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
     "Edit flutter tier": [
       {
         "object_types": [
@@ -18056,15 +17796,6 @@
       }
     ],
     "Edit oral formant grid": [
-      {
-        "object_types": [
-          "KlattGrid"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
-    "Edit phonation -": [
       {
         "object_types": [
           "KlattGrid"
@@ -18214,15 +17945,6 @@
         "_source": "catalogue"
       }
     ],
-    "Extract filters -": [
-      {
-        "object_types": [
-          "KlattGrid"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
     "Extract flutter tier": [
       {
         "object_types": [
@@ -18280,15 +18002,6 @@
             "default": "0.1"
           }
         ],
-        "_source": "catalogue"
-      }
-    ],
-    "Extract phonation -": [
-      {
-        "object_types": [
-          "KlattGrid"
-        ],
-        "params": [],
         "_source": "catalogue"
       }
     ],
@@ -18530,42 +18243,6 @@
         "_source": "catalogue"
       }
     ],
-    "Modify coupling -": [
-      {
-        "object_types": [
-          "KlattGrid"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
-    "Modify frication -": [
-      {
-        "object_types": [
-          "KlattGrid"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
-    "Modify phonation -": [
-      {
-        "object_types": [
-          "KlattGrid"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
-    "Modify vocal tract -": [
-      {
-        "object_types": [
-          "KlattGrid"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
     "Play": [
       {
         "object_types": [
@@ -18599,24 +18276,6 @@
             "default": "yes"
           }
         ],
-        "_source": "catalogue"
-      }
-    ],
-    "Query filters -": [
-      {
-        "object_types": [
-          "KlattGrid"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
-    "Query phonation -": [
-      {
-        "object_types": [
-          "KlattGrid"
-        ],
-        "params": [],
         "_source": "catalogue"
       }
     ],
@@ -19227,18 +18886,6 @@
             "default": "10"
           }
         ],
-        "_source": "catalogue"
-      }
-    ],
-    "Annotate -": [
-      {
-        "object_types": [
-          "Sound",
-          "Pitch",
-          "PointProcess",
-          "LongSound"
-        ],
-        "params": [],
         "_source": "catalogue"
       }
     ],
@@ -20613,25 +20260,6 @@
           }
         ],
         "_source": "catalogue+pkb"
-      }
-    ],
-    "Cast -": [
-      {
-        "object_types": [
-          "Matrix",
-          "TableOfReal"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
-    "Combine two Matrices -": [
-      {
-        "object_types": [
-          "Matrix"
-        ],
-        "params": [],
-        "_source": "catalogue"
       }
     ],
     "Draw as squares": [
@@ -24142,35 +23770,6 @@
         "_source": "catalogue"
       }
     ],
-    "Modify behaviour -": [
-      {
-        "object_types": [
-          "OTGrammar",
-          "OTMulti"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
-    "Modify ranking -": [
-      {
-        "object_types": [
-          "OTGrammar"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
-    "Modify structure -": [
-      {
-        "object_types": [
-          "OTGrammar",
-          "OTMulti"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
     "OTGrammar help": [
       {
         "object_types": [
@@ -25979,16 +25578,6 @@
         "_source": "catalogue"
       }
     ],
-    "Sound -": [
-      {
-        "object_types": [
-          "Pitch",
-          "Spectrum"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
     "Speckle erb": [
       {
         "object_types": [
@@ -26744,16 +26333,6 @@
         "_source": "catalogue"
       }
     ],
-    "Play -": [
-      {
-        "object_types": [
-          "PointProcess",
-          "PitchTier"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
     "Play sine": [
       {
         "object_types": [
@@ -26870,17 +26449,6 @@
         "_source": "catalogue"
       }
     ],
-    "Synthesize -": [
-      {
-        "object_types": [
-          "Spectrogram",
-          "PointProcess",
-          "PitchTier"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
     "Add points": [
       {
         "object_types": [
@@ -26893,16 +26461,6 @@
             "default": "0.1 0.2 0.5"
           }
         ],
-        "_source": "catalogue"
-      }
-    ],
-    "Combine -": [
-      {
-        "object_types": [
-          "Sound",
-          "PointProcess"
-        ],
-        "params": [],
         "_source": "catalogue"
       }
     ],
@@ -30055,24 +29613,6 @@
         "_source": "catalogue"
       }
     ],
-    "Analyse periodicity -": [
-      {
-        "object_types": [
-          "Sound"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
-    "Analyse spectrum -": [
-      {
-        "object_types": [
-          "Sound"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
     "Autocorrelate": [
       {
         "object_types": [
@@ -30106,7 +29646,7 @@
               "stage": 9,
               "tier": "C_lenient_accept",
               "status": "lenient_accept",
-              "source": "harness-primary: Praat lenient — accepted but install-dependent",
+              "source": "harness-primary: Praat lenient \u2014 accepted but install-dependent",
               "harness_title": "Sound: autocorrelate",
               "harness_field_idx": 1,
               "harness_label": "Signal outside time domain is..."
@@ -30719,15 +30259,6 @@
         "_source": "catalogue"
       }
     ],
-    "Filter -": [
-      {
-        "object_types": [
-          "Sound"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
     "Filter with one formant (in-place)": [
       {
         "object_types": [
@@ -31063,15 +30594,6 @@
       }
     ],
     "List all sample times": [
-      {
-        "object_types": [
-          "Sound"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
-    "Manipulate -": [
       {
         "object_types": [
           "Sound"
@@ -37797,24 +37319,6 @@
         "_source": "catalogue"
       }
     ],
-    "Multivariate statistics -": [
-      {
-        "object_types": [
-          "TableOfReal"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
-    "Multivariate tests -": [
-      {
-        "object_types": [
-          "TableOfReal"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
     "Report covariance compound symmetry": [
       {
         "object_types": [
@@ -38349,24 +37853,6 @@
             "_right_label": "Column range"
           }
         ],
-        "_source": "catalogue"
-      }
-    ],
-    "Analyse interval tier -": [
-      {
-        "object_types": [
-          "TextGrid"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
-    "Analyse point tier -": [
-      {
-        "object_types": [
-          "TextGrid"
-        ],
-        "params": [],
         "_source": "catalogue"
       }
     ],
@@ -44676,11 +44162,11 @@
               "Maltese",
               "Marathi",
               "Myanmar (Burmese)",
-              "Māori",
+              "M\u0101ori",
               "Nahuatl (Classical)",
               "Nepali",
               "Nogai",
-              "Norwegian Bokmål",
+              "Norwegian Bokm\u00e5l",
               "Oriya",
               "Oromo",
               "Papiamento",
@@ -52350,7 +51836,7 @@
     {
       "name": "backslashTrigraphsToUnicode$",
       "args": "string$",
-      "desc": "convert e.g. \\ct to ɔ"
+      "desc": "convert e.g. \\ct to \u0254"
     },
     {
       "name": "barkToHertz",
@@ -52370,7 +51856,7 @@
     {
       "name": "beta",
       "args": "x, y",
-      "desc": "β function"
+      "desc": "\u03b2 function"
     },
     {
       "name": "beta2",
@@ -52430,12 +51916,12 @@
     {
       "name": "chiSquareP",
       "args": "chiSquare, df",
-      "desc": "area under the χ² curve up to chiSquare"
+      "desc": "area under the \u03c7\u00b2 curve up to chiSquare"
     },
     {
       "name": "chiSquareQ",
       "args": "chiSquare, df",
-      "desc": "area under the χ² curve after chiSquare"
+      "desc": "area under the \u03c7\u00b2 curve after chiSquare"
     },
     {
       "name": "chooseDirectory$",
@@ -52495,7 +51981,7 @@
     {
       "name": "correlation",
       "args": "u#, v#",
-      "desc": "correlation (between −1 and +1) of two vectors"
+      "desc": "correlation (between \u22121 and +1) of two vectors"
     },
     {
       "name": "cos",
@@ -52726,7 +52212,7 @@
     {
       "name": "erfc",
       "args": "x",
-      "desc": "complement of the error function, i.e. 1 − erf (x)"
+      "desc": "complement of the error function, i.e. 1 \u2212 erf (x)"
     },
     {
       "name": "evaluate",
@@ -53072,7 +52558,7 @@
     {
       "name": "lnGamma",
       "args": "x",
-      "desc": "logarithm of the Γ function"
+      "desc": "logarithm of the \u0393 function"
     },
     {
       "name": "log10",
@@ -53384,7 +52870,7 @@
     {
       "name": "randomGamma##",
       "args": "nrow, ncol, shape, rate",
-      "desc": "nrow × ncol independent gamma-distributed random numbers"
+      "desc": "nrow \u00d7 ncol independent gamma-distributed random numbers"
     },
     {
       "name": "randomGauss",
@@ -53399,7 +52885,7 @@
     {
       "name": "randomGauss##",
       "args": "nrow, ncol, mu, sigma",
-      "desc": "nrow × ncol independent normally distributed random numbers"
+      "desc": "nrow \u00d7 ncol independent normally distributed random numbers"
     },
     {
       "name": "randomImax",
@@ -53419,7 +52905,7 @@
     {
       "name": "randomInteger##",
       "args": "nrow, ncol, min, max",
-      "desc": "nrow × ncol independent uniformly distributed random integers"
+      "desc": "nrow \u00d7 ncol independent uniformly distributed random integers"
     },
     {
       "name": "randomPoisson",
@@ -53439,7 +52925,7 @@
     {
       "name": "randomUniform##",
       "args": "nrow, ncol, min, max",
-      "desc": "nrow × ncol independent uniformly distributed random numbers"
+      "desc": "nrow \u00d7 ncol independent uniformly distributed random numbers"
     },
     {
       "name": "random_initializeSafelyAndUnpredictably",
@@ -53694,7 +53180,7 @@
     {
       "name": "sincpi",
       "args": "x",
-      "desc": "sin (π*x) / (π*x)"
+      "desc": "sin (\u03c0*x) / (\u03c0*x)"
     },
     {
       "name": "sinh",
@@ -53734,12 +53220,12 @@
     {
       "name": "solve#",
       "args": "a##, y#",
-      "desc": "find x for which A · x = y"
+      "desc": "find x for which A \u00b7 x = y"
     },
     {
       "name": "solve##",
       "args": "a##, y##",
-      "desc": "find X for which A · X = Y"
+      "desc": "find X for which A \u00b7 X = Y"
     },
     {
       "name": "solveNonnegative#",
@@ -53849,7 +53335,7 @@
     {
       "name": "sumOver",
       "args": "loopVariable to n, numericExpressionOptionallyUsingLoopVariable",
-      "desc": "Σ"
+      "desc": "\u03a3"
     },
     {
       "name": "system",
@@ -53951,7 +53437,7 @@
     {
       "name": "unicodeToBackslashTrigraphs$",
       "args": "string$",
-      "desc": "convert e.g. ɔ to \\ct"
+      "desc": "convert e.g. \u0254 to \\ct"
     },
     {
       "name": "upperCamelCase$",
@@ -54046,7 +53532,7 @@
     {
       "name": "zero##",
       "args": "nrow, ncol",
-      "desc": "matrix with nrow × ncol elements that are all 0"
+      "desc": "matrix with nrow \u00d7 ncol elements that are all 0"
     }
   ],
   "function_signatures": {
@@ -54184,7 +53670,7 @@
     },
     "backslashTrigraphsToUnicode$": {
       "args": "string$",
-      "desc": "convert e.g. \\ct to ɔ"
+      "desc": "convert e.g. \\ct to \u0254"
     },
     "barkToHertz": {
       "args": "x",
@@ -54200,7 +53686,7 @@
     },
     "beta": {
       "args": "x, y",
-      "desc": "β function"
+      "desc": "\u03b2 function"
     },
     "beta2": {
       "args": "a, b",
@@ -54240,11 +53726,11 @@
     },
     "chiSquareP": {
       "args": "chiSquare, df",
-      "desc": "area under the χ² curve up to chiSquare"
+      "desc": "area under the \u03c7\u00b2 curve up to chiSquare"
     },
     "chiSquareQ": {
       "args": "chiSquare, df",
-      "desc": "area under the χ² curve after chiSquare"
+      "desc": "area under the \u03c7\u00b2 curve after chiSquare"
     },
     "chooseFolder$": {
       "args": "title$",
@@ -54292,7 +53778,7 @@
     },
     "correlation": {
       "args": "u#, v#",
-      "desc": "correlation (between −1 and +1) of two vectors"
+      "desc": "correlation (between \u22121 and +1) of two vectors"
     },
     "cos": {
       "args": "x",
@@ -54468,7 +53954,7 @@
     },
     "erfc": {
       "args": "x",
-      "desc": "complement of the error function, i.e. 1 − erf (x)"
+      "desc": "complement of the error function, i.e. 1 \u2212 erf (x)"
     },
     "evaluate": {
       "args": "...",
@@ -54756,7 +54242,7 @@
     },
     "lnGamma": {
       "args": "x",
-      "desc": "logarithm of the Γ function"
+      "desc": "logarithm of the \u0393 function"
     },
     "log2": {
       "args": "x",
@@ -55012,7 +54498,7 @@
     },
     "randomGamma##": {
       "args": "nrow, ncol, shape, rate",
-      "desc": "nrow × ncol independent gamma-distributed random numbers",
+      "desc": "nrow \u00d7 ncol independent gamma-distributed random numbers",
       "alt_args": "matrix##, shape, rate",
       "alt_desc": "duplicate matrix##, and replace all cells with independent gamma-distributed random numbers"
     },
@@ -55028,7 +54514,7 @@
     },
     "randomGauss##": {
       "args": "nrow, ncol, mu, sigma",
-      "desc": "nrow × ncol independent normally distributed random numbers",
+      "desc": "nrow \u00d7 ncol independent normally distributed random numbers",
       "alt_args": "matrix##, mu, sigma",
       "alt_desc": "duplicate matrix##, and replace all cells with independent normally distributed random numbers"
     },
@@ -55048,7 +54534,7 @@
     },
     "randomInteger##": {
       "args": "nrow, ncol, min, max",
-      "desc": "nrow × ncol independent uniformly distributed random integers",
+      "desc": "nrow \u00d7 ncol independent uniformly distributed random integers",
       "alt_args": "matrix##, min, max",
       "alt_desc": "duplicate matrix##, and replace all cells with independent uniformly distributed random integers"
     },
@@ -55068,7 +54554,7 @@
     },
     "randomUniform##": {
       "args": "nrow, ncol, min, max",
-      "desc": "nrow × ncol independent uniformly distributed random numbers",
+      "desc": "nrow \u00d7 ncol independent uniformly distributed random numbers",
       "alt_args": "matrix##, min, max",
       "alt_desc": "duplicate matrix##, and replace all cells with independent uniformly distributed random numbers"
     },
@@ -55278,7 +54764,7 @@
     },
     "sincpi": {
       "args": "x",
-      "desc": "sin (π*x) / (π*x)"
+      "desc": "sin (\u03c0*x) / (\u03c0*x)"
     },
     "sinh": {
       "args": "x",
@@ -55310,11 +54796,11 @@
     },
     "solve#": {
       "args": "a##, y#",
-      "desc": "find x for which A · x = y"
+      "desc": "find x for which A \u00b7 x = y"
     },
     "solve##": {
       "args": "a##, y##",
-      "desc": "find X for which A · X = Y"
+      "desc": "find X for which A \u00b7 X = Y"
     },
     "solveNonnegative#": {
       "args": "a##, y# [, x], maximumNumberOfIterations, tolerance, infoLevel",
@@ -55402,7 +54888,7 @@
     },
     "sumOver": {
       "args": "loopVariable to n, numericExpressionOptionallyUsingLoopVariable",
-      "desc": "Σ"
+      "desc": "\u03a3"
     },
     "tab$": {
       "args": "",
@@ -55474,7 +54960,7 @@
     },
     "unicodeToBackslashTrigraphs$": {
       "args": "string$",
-      "desc": "convert e.g. ɔ to \\ct"
+      "desc": "convert e.g. \u0254 to \\ct"
     },
     "upperCamelCase$": {
       "args": "string$",
@@ -55550,7 +55036,7 @@
     },
     "zero##": {
       "args": "nrow, ncol",
-      "desc": "matrix with nrow × ncol elements that are all 0"
+      "desc": "matrix with nrow \u00d7 ncol elements that are all 0"
     },
     "editor": {
       "args": "...",
@@ -55881,7 +55367,7 @@
     {
       "name": "@emlClearInfo",
       "purpose": "Explicit Info window clear for dialog handlers",
-      "params": "—",
+      "params": "\u2014",
       "scope": "public"
     },
     {
@@ -55893,7 +55379,7 @@
     {
       "name": "@emlReportFooter",
       "purpose": "Print report footer with borders",
-      "params": "—",
+      "params": "\u2014",
       "scope": "public"
     },
     {
@@ -55917,7 +55403,7 @@
     {
       "name": "@emlReportBlank",
       "purpose": "Print blank line in report",
-      "params": "—",
+      "params": "\u2014",
       "scope": "public"
     },
     {
@@ -55947,7 +55433,7 @@
     {
       "name": "@emlReportDescriptiveHeader",
       "purpose": "Print column headers for descriptive stats table",
-      "params": "—",
+      "params": "\u2014",
       "scope": "public"
     },
     {
@@ -55977,7 +55463,7 @@
     {
       "name": "@emlCSVInit",
       "purpose": "Initialize CSV export accumulator arrays",
-      "params": "—",
+      "params": "\u2014",
       "scope": "public"
     },
     {
@@ -56252,7 +55738,7 @@
     },
     {
       "name": "@emlLinearRegression",
-      "purpose": "OLS simple linear regression (slope, intercept, R², SE, F, p)",
+      "purpose": "OLS simple linear regression (slope, intercept, R\u00b2, SE, F, p)",
       "params": ".x#, .y#",
       "scope": "public"
     },
@@ -56265,13 +55751,13 @@
     {
       "name": "@emlInitDrawingDefaults",
       "purpose": "Initialize panel origin globals and drawing defaults",
-      "params": "—",
+      "params": "\u2014",
       "scope": "public"
     },
     {
       "name": "@emlResetDrawnExtent",
       "purpose": "Reset drawn extent tracker to zero",
-      "params": "—",
+      "params": "\u2014",
       "scope": "public"
     },
     {
@@ -56289,7 +55775,7 @@
     {
       "name": "@emlSetPanelViewport",
       "purpose": "Select outer viewport from theme-computed bounds",
-      "params": "—",
+      "params": "\u2014",
       "scope": "public"
     },
     {
@@ -56343,13 +55829,13 @@
     {
       "name": "@emlDrawInnerBoxIf",
       "purpose": "Draw inner box if config flag is set",
-      "params": "—",
+      "params": "\u2014",
       "scope": "public"
     },
     {
       "name": "@emlExpandAxisControls",
       "purpose": "Parse per-axis tick/value/label visibility flags",
-      "params": "—",
+      "params": "\u2014",
       "scope": "public"
     },
     {
@@ -56427,7 +55913,7 @@
     {
       "name": "@emlAssertFullViewport",
       "purpose": "Select full outer viewport from drawn extent globals",
-      "params": "—",
+      "params": "\u2014",
       "scope": "public"
     },
     {
@@ -56444,7 +55930,7 @@
     },
     {
       "name": "@emlApplyChannelChoice",
-      "purpose": "Batch-mode stereo handler — applies pre-selected channel handling without dialog",
+      "purpose": "Batch-mode stereo handler \u2014 applies pre-selected channel handling without dialog",
       "params": ".soundId, .channelHandling",
       "scope": "public"
     },
@@ -56469,7 +55955,7 @@
     {
       "name": "@emlInitAlphaSprites",
       "purpose": "Locate sprites/ directory; set .available and .dir$",
-      "params": "—",
+      "params": "\u2014",
       "scope": "public"
     },
     {
@@ -56619,7 +56105,7 @@
     {
       "name": "@emlClearAnnotations",
       "purpose": "Reset all annotation arrays to empty",
-      "params": "—",
+      "params": "\u2014",
       "scope": "public"
     },
     {
@@ -56637,7 +56123,7 @@
     {
       "name": "@emlStackBrackets",
       "purpose": "Compute non-overlapping vertical positions for brackets",
-      "params": "—",
+      "params": "\u2014",
       "scope": "public"
     },
     {
@@ -56714,7 +56200,7 @@
     },
     {
       "name": "@emlReportBridgeStats",
-      "purpose": "Thin dispatcher — routes to shared reporters by test type",
+      "purpose": "Thin dispatcher \u2014 routes to shared reporters by test type",
       "params": ".tableId, .dataCol$, .groupCol$",
       "scope": "public"
     },
@@ -56787,25 +56273,25 @@
     {
       "name": "@emlLoadConfig",
       "purpose": "Load saved graph settings from preferences file",
-      "params": "—",
+      "params": "\u2014",
       "scope": "public"
     },
     {
       "name": "@emlSaveConfig",
       "purpose": "Save current graph settings to preferences file",
-      "params": "—",
+      "params": "\u2014",
       "scope": "public"
     },
     {
       "name": "@emlDetectContext",
       "purpose": "Detect selected object type and configure graph options",
-      "params": "—",
+      "params": "\u2014",
       "scope": "public"
     },
     {
       "name": "@emlBuildFilteredMenu",
       "purpose": "Build graph type menu filtered by selected object type",
-      "params": "—",
+      "params": "\u2014",
       "scope": "public"
     },
     {
@@ -56907,7 +56393,7 @@
     {
       "name": "@emlBuildDateStamp",
       "purpose": "Generate YYYY-MM-DD date string from Praat date info",
-      "params": "—",
+      "params": "\u2014",
       "scope": "public"
     },
     {
@@ -56931,7 +56417,7 @@
     {
       "name": "@emlVibratoSelectIntervals",
       "purpose": "Let user select which intervals to analyze",
-      "params": "—",
+      "params": "\u2014",
       "scope": "public"
     },
     {
@@ -56991,13 +56477,13 @@
     {
       "name": "@emlResetSans",
       "purpose": "Reset Demo window to Helvetica, ambient size, 0-100 axes",
-      "params": "—",
+      "params": "\u2014",
       "scope": "public"
     },
     {
       "name": "@emlClearPage",
       "purpose": "Clear Demo window with background color",
-      "params": "—",
+      "params": "\u2014",
       "scope": "public"
     },
     {
@@ -57015,7 +56501,7 @@
     {
       "name": "@emlDrawGuides",
       "purpose": "Draw full development grid overlay (only if showGrid = 1)",
-      "params": "—",
+      "params": "\u2014",
       "scope": "public"
     },
     {
@@ -57177,7 +56663,7 @@
     {
       "name": "@emlTestInit",
       "purpose": "Initialize test runner (clear Info window, reset counters)",
-      "params": "—",
+      "params": "\u2014",
       "scope": "public"
     },
     {
@@ -57225,7 +56711,7 @@
     {
       "name": "@emlTestSummary",
       "purpose": "Print pass/fail summary and exit with status",
-      "params": "—",
+      "params": "\u2014",
       "scope": "public"
     }
   ],
