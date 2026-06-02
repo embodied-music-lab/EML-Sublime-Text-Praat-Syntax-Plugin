@@ -1,6 +1,6 @@
 # EML Sublime Text Praat Syntax Plugin
 
-**v0.9-beta.1** | June 2026
+**v0.9-beta.2** | June 2026
 
 A comprehensive Praat scripting environment for Sublime Text 4, providing syntax highlighting, intelligent autocomplete with parameter tables, hover documentation, and clinical voice analysis guidance.
 
@@ -104,7 +104,7 @@ See `INSTALLATION.md` for detailed instructions with platform-specific paths.
 
 **Clinical parameters:** Praat defaults by Paul Boersma; CPPS parameters per Maryn & Weenink (2015); AVQI v.02.06 per Maryn & Weenink (2015); AVQI v.03.01 per Barsties & Maryn (2015).
 
-**Build system:** adapted from Jörg Mayer's SublimePraat plugin ([praatpfanne.lingphon.net](https://praatpfanne.lingphon.net)), contributed at his suggestion. GPL-3.0-or-later.
+**Build system:** adapted from Jörg Mayer's SublimePraat plugin ([praatpfanne.lingphon.net](https://praatpfanne.lingphon.net/praat-ressourcen/resources-english)), contributed at his suggestion. GPL-3.0-or-later.
 
 **Command database:** Empirically verified against Praat 6.4.65 via the v6 sweep infrastructure (3086 command-host pairs probed). Dropdown options verified against Praat 6.4.65 via the v0.4 verification pipeline harness; v0.8-beta.4 build spot-checked against Praat 6.4.66; v0.8-beta.12 AVQI snippet end-to-end-verified in Praat 6.4.67.
 

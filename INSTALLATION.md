@@ -184,7 +184,7 @@ For anything with a `form`, `beginPause`, file picker, editor, or demo
 window, use the default build.
 
 The build system was contributed at the suggestion of Jörg Mayer and is
-adapted from his SublimePraat plugin (https://praatpfanne.lingphon.net).
+adapted from his SublimePraat plugin (https://praatpfanne.lingphon.net/praat-ressourcen/resources-english).
 GPL-3.0-or-later.
 
 ## Updating
