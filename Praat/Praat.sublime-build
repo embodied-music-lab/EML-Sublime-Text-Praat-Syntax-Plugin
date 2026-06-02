@@ -6,7 +6,7 @@
 	// you are editing — no need to copy it into Praat's own script editor.
 	//
 	// Contributed at the suggestion of, and adapted from, Jörg Mayer's
-	// SublimePraat plugin (https://praatpfanne.lingphon.net). GPL-3.0-or-later.
+	// SublimePraat plugin (https://praatpfanne.lingphon.net/praat-ressourcen/resources-english). GPL-3.0-or-later.
 	//
 	// ---- PRAAT VERSION REQUIRED (build system only) ----
 	//   Default build (--send-or-form): Praat 6.4.43 (14 Sep 2025) or later.
@@ -27,6 +27,13 @@
 	//   praat_build.py), then sends the script to your already-open Praat. Full windows, Play,
 	//   editors, demo window, beginPause, AND forms all work. Errors appear
 	//   in Praat's own dialog (not the Sublime panel). Keep Praat running.
+	//
+	// ---- macOS >= 14 EXCEPTION (handled in praat_build.py, not here) ----
+	//   On macOS 15 (Sequoia) TCC refuses the --send Apple Event to an
+	//   already-running Praat, so on macOS >= 14 praat_build.py overrides the
+	//   osx cmd below with `open -a Praat <file>`: the script opens in Praat's
+	//   editor and you press Cmd-R to run it (forms present natively). The osx
+	//   cmd below is therefore still used as-is on macOS < 14 — leave it.
 	//
 	// ---- VARIANT ("Run headless") ----
 	//   Self-contained batch process. Info -> Sublime panel, errors -> stderr
