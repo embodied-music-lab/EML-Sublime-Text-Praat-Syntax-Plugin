@@ -63,7 +63,7 @@ See `RELEASE_NOTES.md` for the full change list.
 2. If a `Praat/` folder already exists (from another syntax highlighter), rename or zip it as a backup.
 3. Copy the `Praat/` folder from this archive into the `Packages/` directory.
 4. Open any `.praat` file — highlighting, autocomplete, and hover popups are active immediately.
-5. *(Optional)* To run scripts with Ctrl-B / Cmd-B, set your Praat path in `Praat/Praat.sublime-build` — see `INSTALLATION.md`.
+5. *(Optional)* To run scripts with Ctrl-B / Cmd-B, install Praat at the standard location for your OS (`/Applications/Praat.app` on macOS, `C:\Program Files\Praat.exe` on Windows, on your `PATH` on Linux) and it works with no configuration. If Praat is elsewhere, the build auto-discovers it; failing that, set the path in `Praat/Praat.sublime-build`. See `INSTALLATION.md`.
 
 See `INSTALLATION.md` for detailed instructions with platform-specific paths.
 

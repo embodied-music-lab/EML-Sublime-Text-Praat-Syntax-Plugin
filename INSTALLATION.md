@@ -125,18 +125,28 @@ editing directly in Praat — no copy-paste into Praat's script editor.
 
 **Requirement:** Praat 6.4.43 or later (see Requirements above).
 
-### One-time setup — set your Praat path
+### Praat location — usually zero setup
 
-Open `Packages/Praat/Praat.sublime-build` and edit the path for your OS:
+The build needs to find Praat. It looks in this order:
 
-| Platform | Default path in the build file |
-|----------|--------------------------------|
-| macOS    | `/Applications/Praat.app/Contents/MacOS/Praat` |
-| Windows  | `C:\Program Files\Praat.exe` |
-| Linux    | `praat` (assumes it is on your PATH) |
+1. **Standard location (recommended — nothing to configure).** Install
+   Praat where the build expects it and it just works:
 
-The macOS default is usually correct. Windows and Linux users may need
-to point it at their actual Praat location.
+   | Platform | Install Praat at | How the build finds it |
+   |----------|------------------|------------------------|
+   | macOS    | `/Applications/Praat.app` | opened by app name, so any install location works |
+   | Windows  | `C:\Program Files\Praat.exe` | direct path |
+   | Linux    | anywhere on your `PATH` (so `praat` runs in a terminal) | resolved via `PATH` |
+
+2. **Auto-discovery (fallback).** If Praat is not at the standard
+   location, the build tries to find it automatically — `PATH` on every
+   OS, plus `/Applications` and Spotlight on macOS and `Program Files`
+   on Windows.
+
+3. **Manual override (last resort).** If it still can't be found, set the
+   path yourself in `Packages/Praat/Praat.sublime-build` — edit the
+   `cmd` line for your OS. An explicit path that exists is always used
+   as-is and never overridden by auto-discovery.
 
 ### Use it
 
@@ -149,6 +159,14 @@ to point it at their actual Praat location.
    window, editors, and playback all work, because the script runs
    inside your live Praat — switch to the Praat window to answer any
    dialogs.
+
+**macOS 14 (Sonoma) and later:** instead of auto-running, the script
+opens in Praat's script editor — press **Cmd-R** there to run it (forms
+and dialogs appear normally). This is required because macOS 15
+(Sequoia) blocks the send-to-running-Praat mechanism at the system
+level; opening in the editor is reliable across all recent macOS
+versions. On older macOS, Linux, and Windows the script auto-runs as
+described above.
 
 If Ctrl-B does nothing, check that **Tools → Build System** is set to
 **Automatic** or **Praat**.
