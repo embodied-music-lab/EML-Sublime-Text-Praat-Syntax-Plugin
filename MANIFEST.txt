@@ -1,0 +1,36 @@
+EML Sublime Text Praat Syntax Plugin
+Version: v0.9-beta.5
+Date: 3 June 2026
+
+INSTALL: copy the Praat/ folder into your Sublime Text Packages directory
+(Preferences > Browse Packages...), then restart Sublime Text.
+
+Repo layout:
+  Praat/                       Sublime package (install THIS folder)
+    Praat.sublime-syntax       Syntax highlighting grammar
+    Praat.sublime-build        Build system (run script in Praat)
+    Praat.tmPreferences        Symbol / word-boundary settings
+    praat_completions.py       Completions + hover popups (commands, functions,
+                               types, procedures, form/beginPause fields, and
+                               form-derived variables)
+    praat_build.py             Build target (save, per-OS launch, auto-discovery)
+    completions_data.json      Command/function/type data (2038 commands)
+    LICENSE                    Plugin license
+    snippets/                  Sublime snippets (11; proc removed in beta.5)
+  README.md                    Overview + what's new
+  INSTALLATION.md              Install + build setup
+  RELEASE_NOTES.md             Per-version change log
+  MANIFEST.txt                 This file
+  SHA256SUMS                   Checksums (sha256sum -c SHA256SUMS to verify)
+
+Changes since v0.9-beta.4 (see RELEASE_NOTES.md):
+  - @-call autocomplete for procedures defined in the current file; each
+    inserts the call with the procedure's real parameter list as tab-stops.
+    Library procedures remain hover-only (not offered in autocomplete).
+  - procedure / endproc autocomplete fixed (were emitting `procedure ($0)`);
+    procedure now scaffolds a full definition, endproc inserts bare.
+  - Redundant proc.sublime-snippet removed (12 -> 11 snippets).
+  - Built-out procedure / endproc hover: full plain-English reference
+    (parameters, value types, scope, results, calling, placement/include).
+    All examples verified in Praat 6.4.67.
+  - praat_completions.py changed; completions_data.json unchanged (2038 commands).

@@ -1,12 +1,22 @@
 # EML Sublime Text Praat Syntax Plugin
 
-**v0.9-beta.4** | June 2026
+**v0.9-beta.5** | June 2026
 
 A comprehensive Praat scripting environment for Sublime Text 4, providing syntax highlighting, intelligent autocomplete with parameter tables, hover documentation, and clinical voice analysis guidance.
 
 Part of the [EML PraatGen](https://github.com/embodied-music-lab/PraatGen) project.
 
 ## What's new in this build
+
+**Procedure support — `@`-call autocomplete for your own procedures, a fixed `procedure`/`endproc` scaffold, and a full procedure reference on hover.**
+
+- **`@`-call autocomplete.** Type `@` and the procedures you've defined in the current file are offered, each inserting the call with that procedure's real parameter list as tab-stops (e.g. `@meanSD: ${1:.values#}`). Scans the buffer, so it tracks procedures as you add them. (Library procedures are intentionally not offered — see RELEASE_NOTES.)
+- **`procedure` / `endproc` fixed.** These previously autocompleted to the junk `procedure ($0)`. `procedure` now inserts a correct definition scaffold (`procedure name: .param` … `endproc`); `endproc` inserts bare. The redundant standalone `proc` snippet was removed — the partial hit `proc` completes to `procedure` directly.
+- **Built-out `procedure` hover.** Hovering the `procedure` keyword now shows a full plain-English reference: how parameters pass values in (and why call-order matters), the value types you can pass (number, string, `#`, `$#`, `##`) as literals or variables, main-script-variable access vs. parameters, getting results back via `procedureName.var`, calling forms, the no-nesting rule, and where to place procedures (including `include`). All examples verified in Praat 6.4.67.
+
+See `RELEASE_NOTES.md` for the full change list.
+
+## Earlier builds
 
 **Form / `beginPause` field intelligence — hovers and autocomplete for every dialog field type — plus Picture-window completion fixes.**
 
@@ -25,8 +35,6 @@ Part of the [EML PraatGen](https://github.com/embodied-music-lab/PraatGen) proje
 - **Legacy/deprecated commands added** with `support.function.deprecated.praat` scope (blue, like their modern replacements): `echo`, `print`, `printline`, `execute`, `system`, `system_nocheck`. Themes can style `.deprecated` distinctly if desired.
 - **Autocomplete for all new commands.** Legacy commands appear in the completion list with deprecation notes and correct snippet insertion (space-separated args, not colon or parenthesized). `clearinfo` and `select all` insert without trailing syntax. `deleteFile:` added to colon-command completions.
 
-See `RELEASE_NOTES.md` for the full change list.
-
 ## Features
 
 **2041 commands** with per-object-type parameter signatures, types, and defaults — sourced from Praat 6.4.65 and empirically verified.
@@ -44,7 +52,7 @@ See `RELEASE_NOTES.md` for the full change list.
 - Clinical commands show source attribution (Praat defaults by Boersma, or Maryn et al.) and contextual usage notes — which pitch variant to use for what, formant ceiling guidance, CPPS parameter sets.
 - Multi-variant commands show each signature grouped by object type.
 
-**12 code snippets** including the new dialog-driven AVQI v.02.06 + v.03.01 analysis.
+**11 code snippets** including the dialog-driven AVQI v.02.06 + v.03.01 analysis. (Procedure definitions are now offered through autocomplete rather than a snippet.)
 
 **Status bar hints** showing the current parameter name as you type arguments.
 
@@ -89,7 +97,6 @@ See `INSTALLATION.md` for detailed instructions with platform-specific paths.
 | `for` | for loop |
 | `if` / `ifelse` / `ifelif` | conditionals |
 | `while` / `repeat` | loops |
-| `proc` | procedure definition |
 | `form` / `beginpause` | user input dialogs |
 | `batch` | batch file processing loop |
 | `avqi` | AVQI v.02.06 + v.03.01 analysis (Maryn & Weenink 2015; Barsties & Maryn 2015) |
