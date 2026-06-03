@@ -1,6 +1,6 @@
 # EML Sublime Text Praat Syntax Plugin
 
-**v0.9-beta.2** | June 2026
+**v0.9-beta.4** | June 2026
 
 A comprehensive Praat scripting environment for Sublime Text 4, providing syntax highlighting, intelligent autocomplete with parameter tables, hover documentation, and clinical voice analysis guidance.
 
@@ -8,7 +8,12 @@ Part of the [EML PraatGen](https://github.com/embodied-music-lab/PraatGen) proje
 
 ## What's new in this build
 
-**Build system — run Praat scripts from Sublime with Ctrl-B / Cmd-B — plus syntax highlighting fixes, legacy command support, and autocomplete additions.**
+**Form / `beginPause` field intelligence — hovers and autocomplete for every dialog field type — plus Picture-window completion fixes.**
+
+- **Form & `beginPause` field support.** Hovering `form` or `beginPause` lists every field type, grouped; hovering a field keyword (`real`, `boolean`, `choice`, `realvector`, `naturalvector`, …) shows its signature, the derived variable (`$` / `#` / index+`$text`), and the default-quoting rule; `endPause` and `endform` show their signatures; and the field-type list explains how a label becomes a variable name (drop the parenthetical, lowercase the first letter, spaces to underscores; `$` for text/file, `#` for vectors, two variables for `choice`/`optionmenu`). Inside a `form:` / `beginPause:` block, typing a field name autocompletes it with correctly-quoted arguments — numeric defaults quoted in `form:` but unquoted in `beginPause:`, `choice`/`optionmenu` index unquoted — and `choice`/`optionmenu` scaffold their `option:` lines. `naturalvector` is offered only inside `beginPause` (it is rejected by the `form:` parser). All field behaviour — quoting rules, the form-vs-`beginPause` field-set difference, and the `numberOfLines` multi-line variants — was verified empirically against Praat 6.4.67.
+- **Picture-window command completions fixed.** 21 argument-taking commands that previously autocompleted bare now insert their parameters with correct quoting: the `Save as … PNG / EPS / PDF / Windows metafile / fontless EPS` family, `Read from praat picture file`, `Marks left/right/top/bottom` and `Marks … every`, and `Logarithmic marks`. `Colour` offers its 17 named colours with a hover note (named colour, grey value 0–1, or RGB vector). Removed 3 more menu-header artifacts (`Marks`, `Logarithmic marks`, `One logarithmic mark`). Command count: 2041 → 2038.
+
+**From v0.9-beta.2 — build system: run Praat scripts from Sublime with Ctrl-B / Cmd-B — plus syntax highlighting fixes, legacy command support, and autocomplete additions.**
 
 - **Build system added.** A new `Praat.sublime-build` runs the script you're editing directly in Praat — no copy-paste into Praat's script editor. On Linux, Windows, and macOS 13 and earlier it sends the script to your open Praat and auto-runs it (so `form`, `beginPause`, the demo window, editors, and playback all work); a headless variant runs batch scripts with output in Sublime's panel. Requires Praat 6.4.43+ for the default build. Adapted from Jörg Mayer's SublimePraat plugin, contributed at his suggestion.
 - **macOS 14+ (Sonoma / Sequoia) support.** macOS 15 blocks the send-to-running-Praat mechanism at the system level (a TCC restriction on same-application Apple Events), which silently broke Ctrl-B/Cmd-B on Sequoia. On macOS 14 and later the build now opens the script in Praat's script editor instead — press **Cmd-R** to run it; forms and dialogs present normally. Older macOS, Linux, and Windows are unaffected and still auto-run.
