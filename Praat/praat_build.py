@@ -23,11 +23,14 @@
 #    it wherever it is installed — no path needed. Earlier macOS, Linux, and
 #    Windows keep the --send-or-form auto-run path from Praat.sublime-build.
 #
-#    The >= 14 path triggers only on a positively detected major version. If the
-#    version cannot be determined (which should not happen on a real Mac), it
-#    falls through to the --send-or-form cmd, matching the "otherwise" branch of
-#    the plan. To make undetectable macOS use the open-in-editor path instead,
-#    change `major is not None and major >= 14` to `major is None or major >= 14`.
+#    The open-in-editor path triggers on a detected major >= 14 AND when the
+#    version cannot be determined. macOS reports "10.16" to processes not built
+#    against the 11.0+ SDK (the SYSTEM_VERSION_COMPAT shim); _macos_major works
+#    around this by querying sw_vers with SYSTEM_VERSION_COMPAT=0 and by mapping
+#    a "10.16" reading to the modern path. Real macOS <= 10.15 (Catalina) and
+#    11-13 keep the --send-or-form auto-run path. To force auto-run on
+#    undetectable macOS instead, change `major is None or major >= 14` back to
+#    `major is not None and major >= 14`.
 #
 # 3. PRAAT AUTO-DISCOVERY (non-open-a paths)
 #    For the --send-or-form paths, the build file ships the standard Praat
@@ -52,19 +55,41 @@ from Default.exec import ExecCommand
 MACOS_OPEN_THRESHOLD = 14
 
 
+def _parse_macos_major(ver):
+    """'15.6' -> 15. The shim value '10.16' is reported to processes not built
+    against the 11.0+ SDK and means 'Big Sur or later'; map it to a value that
+    takes the modern (open-in-editor) path. Real 10.x (<= 10.15 Catalina)
+    passes through unchanged."""
+    parts = ver.split(".")
+    major = int(parts[0])
+    if major == 10 and len(parts) > 1 and int(parts[1]) >= 16:
+        return 16
+    return major
+
+
 def _macos_major():
-    """macOS major version as an int, or None if it cannot be determined."""
+    """macOS major version as an int, or None if it cannot be determined.
+
+    Prefers `sw_vers` with SYSTEM_VERSION_COMPAT=0, which returns the true
+    product version (e.g. "15.6") even from a process that would otherwise be
+    handed the "10.16" compatibility shim — the cause of the open-in-editor
+    branch silently not firing on Sequoia."""
     try:
-        ver = platform.mac_ver()[0]          # e.g. "15.6"
+        env = dict(os.environ)
+        env["SYSTEM_VERSION_COMPAT"] = "0"
+        ver = subprocess.check_output(
+            ["sw_vers", "-productVersion"], env=env).decode().strip()
         if ver:
-            return int(ver.split(".")[0])
+            return _parse_macos_major(ver)
     except Exception:
         pass
     try:
-        out = subprocess.check_output(["sw_vers", "-productVersion"])
-        return int(out.decode().strip().split(".")[0])
+        ver = platform.mac_ver()[0]          # e.g. "15.6" (may be shimmed)
+        if ver:
+            return _parse_macos_major(ver)
     except Exception:
-        return None
+        pass
+    return None
 
 
 def _exe_available(exe):
@@ -132,7 +157,7 @@ class PraatBuildCommand(ExecCommand):
         # locates Praat by name, so this also serves as discovery on macOS.
         if sublime.platform() == "osx":
             major = _macos_major()
-            if major is not None and major >= MACOS_OPEN_THRESHOLD:
+            if major is None or major >= MACOS_OPEN_THRESHOLD:
                 kwargs["cmd"] = ["open", "-a", "Praat", view.file_name()]
                 super().run(**kwargs)
                 return

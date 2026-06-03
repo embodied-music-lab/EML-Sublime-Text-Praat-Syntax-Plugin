@@ -61,6 +61,196 @@ COLON_COMMANDS = {
     "clearinfo",
 }
 
+# ============================================================================
+# FORM / beginPause FIELD TYPES
+# ----------------------------------------------------------------------------
+# Single source of truth for field-keyword completions AND hover popups.
+# Signatures, default-quoting rules, and rendering quirks were verified
+# empirically against Praat 6.4.67 (form: parse tests + a rendered dialog),
+# not taken from training data. Key findings:
+#   - real/positive/integer/natural: default MUST be quoted in form:
+#     (unquoted is a parse error); in beginPause: the default is an
+#     evaluated expression (unquoted number or a variable).
+#   - boolean: accepts 0/1 unquoted or "yes"/"no" quoted; the label
+#     renders to the RIGHT of the checkbox (no left-column label).
+#   - choice/optionmenu: default is the 1-based option index, UNQUOTED;
+#     quoting the index is a parse error.
+#   - realvector and friends: format token "(whitespace-separated)" or
+#     "(formula)", then a quoted default value.
+# Snippets are form:-oriented (correct quoting for the common case).
+# 'endpause' is a pseudo-entry used only for the hover on endPause.
+# ============================================================================
+FORM_FIELDS = {
+    "real": {
+        "sig": 'real: "label", default',
+        "sig_form": 'real: "label", "50"',
+        "sig_pause": 'real: "label", 50',
+        "snippet": 'real: "${1:Variable name}", "${2:0.0}"',
+        "snippet_pause": 'real: "${1:Variable name}", ${2:0.0}',
+        "desc": "Any real number.",
+        "vartype": "numeric (no suffix)",
+        "quote": 'In form: put the default in quotes, even though it is a number ("50"). In beginPause: leave numbers unquoted (50), and you can use a variable.',
+    },
+    "positive": {
+        "sig": 'positive: "label", default',
+        "sig_form": 'positive: "label", "5500"',
+        "sig_pause": 'positive: "label", 5500',
+        "snippet": 'positive: "${1:Variable name}", "${2:1.0}"',
+        "snippet_pause": 'positive: "${1:Variable name}", ${2:1.0}',
+        "desc": "Real number > 0 (form errors if \u2264 0).",
+        "vartype": "numeric (no suffix)",
+        "quote": 'In form: put the default in quotes, even though it is a number ("50"). In beginPause: leave numbers unquoted (50), and you can use a variable.',
+    },
+    "integer": {
+        "sig": 'integer: "label", default',
+        "sig_form": 'integer: "label", "3"',
+        "sig_pause": 'integer: "label", 3',
+        "snippet": 'integer: "${1:Variable name}", "${2:0}"',
+        "snippet_pause": 'integer: "${1:Variable name}", ${2:0}',
+        "desc": "Any integer.",
+        "vartype": "numeric (no suffix)",
+        "quote": 'In form: put the default in quotes, even though it is a number ("50"). In beginPause: leave numbers unquoted (50), and you can use a variable.',
+    },
+    "natural": {
+        "sig": 'natural: "label", default',
+        "sig_form": 'natural: "label", "5"',
+        "sig_pause": 'natural: "label", 5',
+        "snippet": 'natural: "${1:Variable name}", "${2:1}"',
+        "snippet_pause": 'natural: "${1:Variable name}", ${2:1}',
+        "desc": "Integer \u2265 1 (form errors if < 1).",
+        "vartype": "numeric (no suffix)",
+        "quote": 'In form: put the default in quotes, even though it is a number ("50"). In beginPause: leave numbers unquoted (50), and you can use a variable.',
+    },
+    "word": {
+        "sig": 'word: "label", "default"',
+        "snippet": 'word: "${1:Variable name}", "${2:default}"',
+        "desc": "Single word \u2014 Praat keeps only up to the first space. Type "
+                "\"two words\" into a word field and the variable holds just "
+                "\"two\". Use sentence when spaces should be kept.",
+        "vartype": "string ($ suffix)",
+    },
+    "sentence": {
+        "sig": 'sentence: "label", "default"',
+        "snippet": 'sentence: "${1:Variable name}", "${2:default text}"',
+        "desc": "Free text on one line, spaces and all \u2014 e.g. a \"Note\" "
+                "field accepts \"take 2, breathy onset\" intact. Use word for a "
+                "single token.",
+        "vartype": "string ($ suffix)",
+    },
+    "text": {
+        "sig": 'text: "label", "default"',
+        "snippet": 'text: "${1:Variable name}", "${2:default text}"',
+        "desc": "Free text. Multi-line variant: text: numberOfLines, \"label\", \"default\".",
+        "vartype": "string ($ suffix)",
+    },
+    "boolean": {
+        "sig": 'boolean: "label", 0',
+        "snippet": 'boolean: "${1:Variable name}", ${2:0}',
+        "desc": "Checkbox. The label renders to the RIGHT of the checkbox (no left-column label).",
+        "vartype": "numeric 0/1 (no suffix)",
+        "quote": 'Accepts 0/1 unquoted or "yes"/"no" quoted.',
+    },
+    "choice": {
+        "sig": 'choice: "label", index  (+ option: lines)',
+        "snippet": 'choice: "${1:Variable name}", ${2:1}\n\toption: "${3:option 1}"\n\toption: "${4:option 2}"',
+        "desc": "Radio-button group; each option is an option: line. You get two "
+                "variables \u2014 e.g. a \"Window shape\" choice with options "
+                "Hann/Rectangular gives window_shape (the number, 1 for Hann) and "
+                "window_shape$ (the text, \"Hann\").",
+        "vartype": "two variables \u2014 index (numeric) + $text (string)",
+        "quote": "Default is the option number (1 = the first option), with no quotes — putting it in quotes breaks the script.",
+    },
+    "optionmenu": {
+        "sig": 'optionmenu: "label", index  (+ option: lines)',
+        "snippet": 'optionmenu: "${1:Variable name}", ${2:1}\n\toption: "${3:option 1}"\n\toption: "${4:option 2}"',
+        "desc": "Compact dropdown; same two-variable result as choice \u2014 e.g. a "
+                "\"Pitch unit\" menu with Hertz/Semitones gives pitch_unit (the "
+                "number) and pitch_unit$ (the text).",
+        "vartype": "two variables \u2014 index (numeric) + $text (string)",
+        "quote": "Default is the option number (1 = the first option), with no quotes — putting it in quotes breaks the script.",
+    },
+    "option": {
+        "sig": 'option: "text"',
+        "snippet": 'option: "${1:option text}"',
+        "desc": "One entry within a choice or optionmenu group.",
+        "vartype": "none (belongs to the preceding choice/optionmenu)",
+    },
+    "comment": {
+        "sig": 'comment: "text"',
+        "snippet": 'comment: "${1:text}"',
+        "desc": "Displays static text; declares no variable.",
+        "vartype": "none (display only)",
+    },
+    "infile": {
+        "sig": 'infile: "label", "default"',
+        "snippet": 'infile: "${1:Variable name}", "${2:}"',
+        "desc": "Input file path with a Browse\u2026 button. Multi-line variant: infile: numberOfLines, \u2026.",
+        "vartype": "string ($ suffix)",
+    },
+    "outfile": {
+        "sig": 'outfile: "label", "default"',
+        "snippet": 'outfile: "${1:Variable name}", "${2:}"',
+        "desc": "Output file path with a Browse\u2026 button. Multi-line variant: outfile: numberOfLines, \u2026.",
+        "vartype": "string ($ suffix)",
+    },
+    "folder": {
+        "sig": 'folder: "label", "default"',
+        "snippet": 'folder: "${1:Variable name}", "${2:}"',
+        "desc": "Folder path with a native folder browser. Multi-line variant: folder: numberOfLines, \u2026.",
+        "vartype": "string ($ suffix)",
+    },
+    "realvector": {
+        "sig": 'realvector: "label", "(whitespace-separated)", "1 2 3"',
+        "snippet": 'realvector: "${1:Variable name}", "${2:(whitespace-separated)}", "${3:1 2 3}"',
+        "desc": "Vector of reals. Format token: (whitespace-separated) or (formula).",
+        "vartype": "vector (# suffix)",
+        "quote": "Format token quoted; default value quoted. Multi-line variant: realvector: numberOfLines, \u2026.",
+    },
+    "positivevector": {
+        "sig": 'positivevector: "label", "(whitespace-separated)", "1 2 3"',
+        "snippet": 'positivevector: "${1:Variable name}", "${2:(whitespace-separated)}", "${3:1 2 3}"',
+        "desc": "Vector of reals > 0. Same shape as realvector.",
+        "vartype": "vector (# suffix)",
+        "quote": "Format token quoted; default value quoted. Multi-line variant: positivevector: numberOfLines, \u2026.",
+    },
+    "integervector": {
+        "sig": 'integervector: "label", "(whitespace-separated)", "1 2 3"',
+        "snippet": 'integervector: "${1:Variable name}", "${2:(whitespace-separated)}", "${3:1 2 3}"',
+        "desc": "Vector of integers. Same shape as realvector.",
+        "vartype": "vector (# suffix)",
+        "quote": "Format token quoted; default value quoted. Multi-line variant: integervector: numberOfLines, \u2026.",
+    },
+    "naturalvector": {
+        "sig": 'naturalvector: "label", "(whitespace-separated)", "1 2 3"',
+        "snippet": 'naturalvector: "${1:Variable name}", "${2:(whitespace-separated)}", "${3:1 2 3}"',
+        "desc": "Vector of integers \u2265 1. beginPause ONLY \u2014 form: rejects it (\u201cUnknown parameter type\u201d).",
+        "vartype": "vector (# suffix)",
+        "quote": "beginPause only. Format token quoted; default value quoted. Multi-line variant: naturalvector: numberOfLines, \u2026 (pause).",
+    },
+    # Pseudo-entry: hover + block-closer completion. Closes a beginPause block.
+    "endpause": {
+        "sig": 'clicked = endPause: "Quit", "Continue", 2, 0',
+        "desc": "Closes a beginPause dialog and shows its buttons. The number "
+                "you store (here \"clicked\") tells you which button was pressed "
+                "\u2014 1 for the first, 2 for the second. In the example: two "
+                "buttons, \"Continue\" (button 2) is highlighted as the default, "
+                "and the final 0 hides the Stop button. So you would then check "
+                "\"if clicked = 1\" to handle the Quit case.",
+        "vartype": "the number you store = which button was pressed (1 = first)",
+        "quote": "The numbers after the buttons are: which button is the "
+                 "default (lights up for Enter), and \u2014 if you add one more "
+                 "\u2014 which button counts as Cancel. Use 0 there to just hide "
+                 "the Stop button without naming a Cancel. If a Cancel button is "
+                 "named and the user clicks it (or closes the window), the field "
+                 "values are left unchanged, so handle that case.",
+    },
+    # Pseudo-entry: hover + block-closer completion. Closes a form block.
+    "endform": {
+        "sig": 'endform',
+        "desc": "Closes the form: block \u2014 lowercase, no colon, no arguments. Everything between form: and endform is the dialog the user fills in before the rest of the script runs.",
+    },
+}
+
 # Clinical canonical parameter sets and contextual usage notes.
 # 'clinical' is the ⚕ line — attributes the source (Praat defaults or published norms).
 # 'note' is contextual guidance (when present).
@@ -376,6 +566,11 @@ def _details_html(name, variant, include_clinical=True):
         host_line = "<i>Object: %s</i>" % ", ".join(hosts)
         body = (host_line + "<br><br>" + body) if body else host_line
 
+    note = variant.get("_note")
+    if note:
+        note_html = _esc(note).replace("\n", "<br>")
+        body = (body + "<br><br>" + note_html) if body else note_html
+
     if include_clinical and name in CLINICAL_INFO:
         info = CLINICAL_INFO[name]
         if body:
@@ -632,6 +827,186 @@ def _get_line_prefix(view, point):
     return stripped
 
 
+def _form_block_kind(view, point):
+    """Return 'form', 'pause', or None for the block enclosing `point`.
+
+    form: ... endform  -> 'form'
+    beginPause: ... endPause -> 'pause'
+    Scans upward; the first block marker decides. Capped at 300 lines.
+    The form/pause distinction matters because naturalvector is a valid
+    beginPause field but is rejected by the form: parser ("Unknown
+    parameter type") \u2014 verified empirically, Praat 6.4.67.
+    """
+    row = view.rowcol(point)[0]
+    for r in range(row, max(-1, row - 300), -1):
+        line = view.substr(view.line(view.text_point(r, 0))).strip().lower()
+        if not line:
+            continue
+        if "endpause" in line or line == "endform":
+            return None
+        if line.startswith("beginpause"):
+            return "pause"
+        if (line.startswith("form:")
+                or line == "form"
+                or line.startswith("form ")):
+            return "form"
+    return None
+
+
+def _fn_head_html(name, args):
+    """Render the <code> head for a function/colon-statement hover.
+
+    Colon-call statements (writeInfoLine:, selectObject:, writeFile:, ...)
+    are invoked as `name: args`, not `name (args)` — rendering them in the
+    parenthesized function form is wrong for these statements. Members of
+    COLON_COMMANDS therefore render in colon form. clearinfo takes no
+    arguments and is called bare (no colon), so it renders as a plain name.
+    """
+    esc_name = _esc(name)
+    if name in COLON_COMMANDS:
+        if args:
+            return '<code>%s: %s</code>' % (esc_name, _esc(args))
+        return '<code>%s</code>' % esc_name
+    if args:
+        return '<code>%s</code> <code>(%s)</code>' % (esc_name, _esc(args))
+    return '<code>%s</code>' % esc_name
+
+
+# ============================================================================
+# FORM / beginPause VARIABLE DERIVATION  (beta.4 Feature 1)
+# ----------------------------------------------------------------------------
+# Offer the variables a form:/beginPause: block defines as completions
+# throughout the script. Praat form variables are script-global.
+#
+# Derivation algorithm — verified empirically against Praat 6.4.67 this
+# session (NOT taken from Rule 20, which was wrong on three points):
+#   1. Truncate the label at the FIRST "(" (everything from "(" onward is
+#      discarded, including any text after the closing paren).
+#      "Floor (Hz) max" -> "Floor"   (NOT "Floor max")
+#   2. Trim surrounding whitespace.
+#   3. Lowercase the FIRST character only; preserve the case of the rest.
+#      "Max F0" -> "max_F0"   "ABC def" -> "aBC_def"
+#   4. Replace EACH space with one underscore (consecutive spaces are NOT
+#      collapsed).  "Pitch  ceiling" -> "pitch__ceiling"
+#   5. Keep every other character verbatim — hyphens, slashes, apostrophes,
+#      leading digits are all preserved in the symbol Praat creates.
+#   6. Suffix by type: string -> "$", vector -> "#", choice/optionmenu ->
+#      TWO variables (index numeric + "$" option text), numeric/boolean ->
+#      none, comment/option -> no variable.
+#
+# REFERENCEABILITY GATE (critical): Praat CREATES the variable for any
+# label (verified via variableExists), but a name containing an operator
+# character or a leading digit CANNOT be referenced in script code — the
+# tokenizer splits "voiced-unvoiced_cost$" at "-", reads "input/output" as
+# division, and rejects a leading digit. Such names exist but are unusable,
+# so they are NOT offered as completions. Only names matching Praat's
+# identifier grammar (^[A-Za-z][A-Za-z0-9_]*$, before the type suffix) are
+# referenceable and therefore offered. Underscores (incl. doubled) pass.
+# ============================================================================
+
+# Field keyword -> variable kind. option/comment produce no variable and are
+# intentionally absent. naturalvector is beginPause-only but still produces a
+# vector variable, so it is included.
+_FIELD_KIND = {
+    "real": "numeric", "positive": "numeric",
+    "integer": "numeric", "natural": "numeric", "boolean": "numeric",
+    "word": "string", "sentence": "string", "text": "string",
+    "infile": "string", "outfile": "string", "folder": "string",
+    "choice": "choice", "optionmenu": "choice",
+    "realvector": "vector", "positivevector": "vector",
+    "integervector": "vector", "naturalvector": "vector",
+}
+
+_FIELD_LINE_RE = re.compile(r'^([a-zA-Z]+)\s*:\s*(.*)$')
+_FIRST_QUOTED_RE = re.compile(r'"([^"]*)"')
+# A referenceable Praat identifier (suffix added separately).
+_IDENT_RE = re.compile(r'^[A-Za-z][A-Za-z0-9_]*$')
+
+
+def _derive_form_var(label, kind):
+    """Return [(varname, type_note), ...] of REFERENCEABLE variables a field
+    declares, or [] if the label derives to a non-referenceable name or the
+    field declares no variable. Mirrors Praat 6.4.67 behavior exactly."""
+    base = label.split("(", 1)[0].strip()
+    if not base:
+        return []
+    base = base.replace(" ", "_")
+    base = base[0].lower() + base[1:]
+    if not _IDENT_RE.match(base):
+        return []  # exists in Praat but cannot be referenced in code
+    if kind == "string":
+        return [(base + "$", "string")]
+    if kind == "vector":
+        return [(base + "#", "vector")]
+    if kind == "numeric":
+        return [(base, "number")]
+    if kind == "choice":
+        return [(base, "number (option index)"),
+                (base + "$", "string (option text)")]
+    return []
+
+
+def _collect_form_variables(view):
+    """Scan the buffer for form:/beginPause: field declarations and return a
+    deduped list of dicts {name, type_note, source_label} for every
+    referenceable variable they define. Only lines genuinely inside a
+    form/beginPause block are considered."""
+    text = view.substr(sublime.Region(0, view.size()))
+    in_block = None
+    seen = set()
+    out = []
+    for raw in text.split("\n"):
+        line = raw.strip()
+        if not line:
+            continue
+        low = line.lower()
+        # Block boundaries (mirrors _form_block_kind's marker logic).
+        if low == "endform" or "endpause" in low:
+            in_block = None
+            continue
+        if low.startswith("beginpause"):
+            in_block = "pause"
+            continue
+        if low.startswith("form:") or low == "form" or low.startswith("form "):
+            in_block = "form"
+            continue
+        if in_block is None:
+            continue
+        m = _FIELD_LINE_RE.match(line)
+        if not m:
+            continue
+        ftype = m.group(1).lower()
+        kind = _FIELD_KIND.get(ftype)
+        if kind is None:
+            continue
+        qm = _FIRST_QUOTED_RE.search(m.group(2))
+        if not qm:
+            continue
+        label = qm.group(1)
+        for name, type_note in _derive_form_var(label, kind):
+            if name in seen:
+                continue
+            seen.add(name)
+            out.append({"name": name, "type_note": type_note,
+                        "source_label": label})
+    return out
+
+
+def _form_field_html(fdef):
+    """Render the shared HTML body for a form/beginPause field entry.
+
+    Used both as the completion `details` panel and (with the CSS wrapper
+    added by _popup_show) as the hover popup body.
+    """
+    body = '<div class="head"><code>%s</code></div>' % _esc(fdef["sig"])
+    body += _esc(fdef["desc"])
+    if fdef.get("vartype"):
+        body += '<br><br><i>Variable: %s</i>' % _esc(fdef["vartype"])
+    if fdef.get("quote"):
+        body += "<br><br>" + _esc(fdef["quote"])
+    return body
+
+
 class PraatCompletionListener(sublime_plugin.EventListener):
     """Emit one completion per command-variant; merge identical-signature ones."""
 
@@ -812,6 +1187,80 @@ class PraatCompletionListener(sublime_plugin.EventListener):
                     )
                     results.append(item)
 
+        # --- form / beginPause field-type snippets ---
+        # Only offered inside a form: or beginPause: block. Matched from the
+        # (indented) line start; an empty prefix offers the full field set.
+        # naturalvector is offered only in beginPause blocks (form: rejects it).
+        block_kind = _form_block_kind(view, point)
+        if block_kind:
+            field_prefix = line_prefix_lower.strip()
+            for fname, fdef in FORM_FIELDS.items():
+                # endpause / endform are pseudo-entries (hover only here) and
+                # have no field snippet; they are offered as block-closers
+                # below, matched on the trailing word so they work after
+                # "clicked = ".
+                if fname in ("endpause", "endform"):
+                    continue
+                if fname == "naturalvector" and block_kind == "form":
+                    continue
+                if fname.startswith(field_prefix):
+                    snip = fdef["snippet"]
+                    if block_kind == "pause" and fdef.get("snippet_pause"):
+                        snip = fdef["snippet_pause"]
+                    results.append(sublime.CompletionItem.snippet_completion(
+                        trigger=fname,
+                        snippet=snip,
+                        annotation=fdef["desc"][:40],
+                        kind=(sublime.KIND_ID_KEYWORD, "\u25a2", "Form field"),
+                        details=_form_field_html(fdef),
+                    ))
+
+        # --- Block closers: endPause / endform ---
+        # Offered on the trailing word `prefix` alone, independent of block
+        # detection: "endP" -> endPause, "endf" -> endform (the prefixes don't
+        # collide). Decoupled from _form_block_kind on purpose — when someone
+        # deletes and re-types a closer line, block boundaries are in flux and
+        # detection is unreliable; the typed word is the reliable signal.
+        # endPause scaffolds the capture + a default button set; endform is bare.
+        if len(prefix_lower) >= 2:
+            if "endpause".startswith(prefix_lower):
+                results.append(sublime.CompletionItem.snippet_completion(
+                    trigger="endPause",
+                    snippet='clicked = endPause: "${1:Quit}", "${2:Continue}", ${3:2}, ${4:0}',
+                    annotation="close beginPause; capture the button",
+                    kind=(sublime.KIND_ID_KEYWORD, "\u25a2", "Form field"),
+                    details=_form_field_html(FORM_FIELDS["endpause"]),
+                ))
+            if "endform".startswith(prefix_lower):
+                results.append(sublime.CompletionItem.snippet_completion(
+                    trigger="endform",
+                    snippet="endform",
+                    annotation="close the form: block",
+                    kind=(sublime.KIND_ID_KEYWORD, "\u25a2", "Form field"),
+                    details=_form_field_html(FORM_FIELDS["endform"]),
+                ))
+
+        # --- form/beginPause-derived variables (beta.4 Feature 1) ---
+        # Praat form variables are script-global, so offer them anywhere a
+        # word is being typed. The value-add over Sublime's built-in word
+        # completion is the manual $/# suffix (ST4 on macOS splits words on
+        # $/#, so it never offers `pitch_floor$` — only `pitch_floor`).
+        if prefix_lower:
+            for fv in _collect_form_variables(view):
+                name = fv["name"]
+                base = name.rstrip("$#")
+                if (name.lower().startswith(prefix_lower)
+                        or base.lower().startswith(prefix_lower)):
+                    src = _esc(fv["source_label"])
+                    results.append(sublime.CompletionItem(
+                        trigger=name,
+                        annotation="from form field \u201c%s\u201d" % fv["source_label"],
+                        completion=name,
+                        kind=(sublime.KIND_ID_VARIABLE, "v", "Form variable"),
+                        details="Script variable from the form field "
+                                "<code>%s</code> (%s)." % (src, _esc(fv["type_note"])),
+                    ))
+
         if not results:
             return None
 
@@ -976,6 +1425,29 @@ class PraatHoverListener(sublime_plugin.EventListener):
 
         scope = view.scope_name(point)
 
+        # Form/beginPause field-type keyword (real, sentence, boolean, ...).
+        # The syntax tags the keyword+colon as storage.type.form.praat.
+        if "storage.type.form.praat" in scope:
+            region = view.extract_scope(point)
+            fname = view.substr(region).rstrip(":").strip().lower()
+            self._popup_form_field(view, point, fname)
+            return
+
+        # form / beginPause / endPause keywords. These share the generic
+        # keyword.control.praat scope with if/for/while/etc., so dispatch
+        # only on the specific words and let the rest fall through.
+        if "keyword.control.praat" in scope:
+            word = view.substr(self._extract_token_at(view, point)).strip()
+            if word in ("form", "beginPause"):
+                self._popup_form_overview(view, point, word)
+                return
+            if word == "endPause":
+                self._popup_form_field(view, point, "endpause")
+                return
+            if word == "endform":
+                self._popup_form_field(view, point, "endform")
+                return
+
         # Multi-word commands: extract the full scoped region (the syntax file
         # tags the whole command name as one support.function.command span).
         if "support.function.command" in scope:
@@ -1057,6 +1529,19 @@ class PraatHoverListener(sublime_plugin.EventListener):
         if name in _data.get("object_types", []):
             self._popup_type(view, point, name)
             return
+
+        # Form/beginPause-derived variable usage (beta.4 Feature 1): if the
+        # hovered token is a variable some form field defines, name the field.
+        if name:
+            for fv in _collect_form_variables(view):
+                if fv["name"] == name:
+                    body = ('<div class="head"><code>%s</code></div>'
+                            'Script variable (%s) from the form field '
+                            '<code>%s</code>.') % (
+                        _esc(name), _esc(fv["type_note"]),
+                        _esc(fv["source_label"]))
+                    _popup_show(view, point, body, max_width=480, max_height=160)
+                    return
 
     def _extract_token_at(self, view, point):
         """Extract a token at `point`, treating `$` and `#` as word characters.
@@ -1153,12 +1638,9 @@ class PraatHoverListener(sublime_plugin.EventListener):
         if signatures:
             body = ""
             for i, sg in enumerate(signatures):
-                head_parts = ["<code>%s</code>" % _esc(name)]
-                if sg.get("args"):
-                    head_parts.append("<code>(%s)</code>" % _esc(sg["args"]))
                 if i > 0:
                     body += '<div class="sep"></div>'
-                body += '<div class="head">%s</div>' % " ".join(head_parts)
+                body += '<div class="head">%s</div>' % _fn_head_html(name, sg.get("args", ""))
                 if sg.get("desc"):
                     body += "<br/>" + _esc(sg["desc"])
             _popup_show(view, point, body, max_height=320)
@@ -1168,19 +1650,13 @@ class PraatHoverListener(sublime_plugin.EventListener):
         desc = sig.get("desc", "")
         alt_args = sig.get("alt_args", "")
         alt_desc = sig.get("alt_desc", "")
-        head_parts = ["<code>%s</code>" % _esc(name)]
-        if args:
-            head_parts.append("<code>(%s)</code>" % _esc(args))
-        head = '<div class="head">%s</div>' % " ".join(head_parts)
+        head = '<div class="head">%s</div>' % _fn_head_html(name, args)
         body = head
         if desc:
             body += "<br/>" + _esc(desc)
         if alt_args or alt_desc:
             body += '<div class="sep"></div>'
-            alt_head_parts = ["<code>%s</code>" % _esc(name)]
-            if alt_args:
-                alt_head_parts.append("<code>(%s)</code>" % _esc(alt_args))
-            body += '<div class="head">%s</div>' % " ".join(alt_head_parts)
+            body += '<div class="head">%s</div>' % _fn_head_html(name, alt_args)
             if alt_desc:
                 body += "<br/>" + _esc(alt_desc)
         _popup_show(view, point, body, max_height=320)
@@ -1213,3 +1689,82 @@ class PraatHoverListener(sublime_plugin.EventListener):
                     body += "<br/><br/><i>Scope: %s</i>" % _esc(scope_tag)
                 _popup_show(view, point, body, max_height=320)
                 return
+
+    def _popup_form_field(self, view, point, fname):
+        fdef = FORM_FIELDS.get(fname)
+        if not fdef:
+            return
+        body = _form_field_html(fdef)
+        if fname not in ("endpause", "endform"):
+            body += (_SEP + "<i>In form: put the default in quotes, even numbers "
+                     "(&quot;50&quot;). In beginPause: numbers need no quotes (50), "
+                     "and a variable can be used.</i>")
+        _popup_show(view, point, body, max_width=560, max_height=340)
+
+    def _popup_form_overview(self, view, point, word):
+        is_pause = (word == "beginPause")
+        body = '<div class="head"><code>%s: "title"</code></div>' % _esc(word)
+        if is_pause:
+            body += ("A dialog you can show whenever the script runs, as many times "
+                     "as you like, with if/then logic allowed between the fields. "
+                     "Numbers used as defaults need no quotes (50), and a default can "
+                     "be a variable. Buttons are the ones you name in endPause, plus Undo.")
+        else:
+            body += ("An input form shown at the very start of a script (one per "
+                     "script, no logic between fields). Most defaults go in quotes, "
+                     "even numbers (&quot;50&quot;) \u2014 except boolean (0/1) and "
+                     "choice/optionmenu (the option number), which are bare. Form "
+                     "defaults are fixed values, not variables. Buttons: Standards "
+                     "/ Cancel / Apply / OK.")
+        body += (_SEP + "<b>How a label becomes a variable</b><br>"
+                 "Cut the label at the first &quot;(&quot; \u2014 drop it and "
+                 "everything after it \u2014 then lowercase the first letter and turn "
+                 "spaces into underscores. So &quot;Pitch floor (Hz)&quot; becomes "
+                 "<code>pitch_floor</code>, and &quot;Floor (Hz) max&quot; becomes "
+                 "<code>floor</code> (the &quot;max&quot; after the parenthesis is "
+                 "dropped too). Text and file fields add <code>$</code>; vector fields "
+                 "add <code>#</code>; a choice or menu gives you two variables \u2014 "
+                 "the option number and its text (<code>$</code>)."
+                 "<br><br>These variables are then suggested as you type them "
+                 "anywhere later in the script."
+                 "<br><br>For a name Praat can actually use, keep the label to "
+                 "letters, digits and spaces (a unit in parentheses is fine). A "
+                 "label that starts with a digit, or contains punctuation like a "
+                 "hyphen or an apostrophe, makes a name that can't be referenced "
+                 "in code \u2014 those are not suggested.")
+        body += (_SEP + "<b>Side-by-side fields (ranges)</b><br>"
+                 "Start a number field's label with the word <code>left</code> or "
+                 "<code>right</code> to put two boxes on one row \u2014 handy for a "
+                 "range. Praat shows the rest of the label once and fills two "
+                 "variables. So a <code>left Time range (s)</code> field and a "
+                 "<code>right Time range (s)</code> field appear as a single row "
+                 "labelled &quot;Time range (s)&quot; and give you "
+                 "<code>left_Time_range</code> and <code>right_Time_range</code>. "
+                 "Works the same in <code>form</code> and <code>beginPause</code> "
+                 "(quote the numbers in <code>form</code>, leave them bare in "
+                 "<code>beginPause</code>).")
+        vec = ["realvector", "positivevector", "integervector"]
+        if is_pause:
+            vec.append("naturalvector")
+        groups = [
+            ("Numeric (no suffix)", ["real", "positive", "integer", "natural"]),
+            ("String ($)", ["word", "sentence", "text"]),
+            ("Boolean", ["boolean"]),
+            ("Choice (index + $text)", ["choice", "optionmenu", "option"]),
+            ("File / folder ($)", ["infile", "outfile", "folder"]),
+            ("Vector (#)", vec),
+            ("Display only", ["comment"]),
+        ]
+        for title, names in groups:
+            body += _SEP + "<b>%s</b><br>" % _esc(title)
+            rows = []
+            for n in names:
+                tag = " <i>(beginPause only)</i>" if n == "naturalvector" else ""
+                fdef = FORM_FIELDS[n]
+                key = "sig_pause" if is_pause else "sig_form"
+                s = fdef.get(key) or fdef["sig"]
+                rows.append("<code>%s</code>%s" % (_esc(s), tag))
+            body += "<br>".join(rows)
+        if is_pause:
+            body += _SEP + "<code>%s</code>" % _esc(FORM_FIELDS["endpause"]["sig"])
+        _popup_show(view, point, body, max_width=660, max_height=640)

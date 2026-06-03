@@ -29646,7 +29646,7 @@
               "stage": 9,
               "tier": "C_lenient_accept",
               "status": "lenient_accept",
-              "source": "harness-primary: Praat lenient \u2014 accepted but install-dependent",
+              "source": "harness-primary: Praat lenient — accepted but install-dependent",
               "harness_title": "Sound: autocorrelate",
               "harness_field_idx": 1,
               "harness_label": "Signal outside time domain is..."
@@ -44162,11 +44162,11 @@
               "Maltese",
               "Marathi",
               "Myanmar (Burmese)",
-              "M\u0101ori",
+              "Māori",
               "Nahuatl (Classical)",
               "Nepali",
               "Nogai",
-              "Norwegian Bokm\u00e5l",
+              "Norwegian Bokmål",
               "Oriya",
               "Oromo",
               "Papiamento",
@@ -49566,8 +49566,34 @@
         "object_types": [
           "Picture"
         ],
-        "params": [],
-        "_source": "catalogue"
+        "params": [
+          {
+            "type": "OPTIONMENU",
+            "label": "Colour",
+            "default": "black",
+            "options": [
+              "black",
+              "white",
+              "red",
+              "green",
+              "blue",
+              "yellow",
+              "cyan",
+              "magenta",
+              "maroon",
+              "lime",
+              "navy",
+              "teal",
+              "purple",
+              "olive",
+              "pink",
+              "silver",
+              "grey"
+            ]
+          }
+        ],
+        "_source": "catalogue+picturewindow-v0.9-beta.2",
+        "_note": "Accepts a named colour (listed above), a grey value from 0 (black) to 1 (white), or an RGB vector such as {0.3, 0.5, 0.7}."
       }
     ],
     "Copy to clipboard": [
@@ -50108,22 +50134,34 @@
         "_source": "catalogue"
       }
     ],
-    "Logarithmic marks": [
-      {
-        "object_types": [
-          "Picture"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
     "Logarithmic marks bottom": [
       {
         "object_types": [
           "Picture"
         ],
-        "params": [],
-        "_source": "catalogue"
+        "params": [
+          {
+            "type": "NATURAL",
+            "label": "Marks per decade",
+            "default": "3"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Write numbers",
+            "default": "yes"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Draw ticks",
+            "default": "yes"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Draw dotted lines",
+            "default": "no"
+          }
+        ],
+        "_source": "catalogue+picturewindow-v0.9-beta.2"
       }
     ],
     "Logarithmic marks left": [
@@ -50131,8 +50169,29 @@
         "object_types": [
           "Picture"
         ],
-        "params": [],
-        "_source": "catalogue"
+        "params": [
+          {
+            "type": "NATURAL",
+            "label": "Marks per decade",
+            "default": "3"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Write numbers",
+            "default": "yes"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Draw ticks",
+            "default": "yes"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Draw dotted lines",
+            "default": "no"
+          }
+        ],
+        "_source": "catalogue+picturewindow-v0.9-beta.2"
       }
     ],
     "Logarithmic marks right": [
@@ -50140,8 +50199,29 @@
         "object_types": [
           "Picture"
         ],
-        "params": [],
-        "_source": "catalogue"
+        "params": [
+          {
+            "type": "NATURAL",
+            "label": "Marks per decade",
+            "default": "3"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Write numbers",
+            "default": "yes"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Draw ticks",
+            "default": "yes"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Draw dotted lines",
+            "default": "no"
+          }
+        ],
+        "_source": "catalogue+picturewindow-v0.9-beta.2"
       }
     ],
     "Logarithmic marks top": [
@@ -50149,20 +50229,32 @@
         "object_types": [
           "Picture"
         ],
-        "params": [],
-        "_source": "catalogue"
+        "params": [
+          {
+            "type": "NATURAL",
+            "label": "Marks per decade",
+            "default": "3"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Write numbers",
+            "default": "yes"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Draw ticks",
+            "default": "yes"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Draw dotted lines",
+            "default": "no"
+          }
+        ],
+        "_source": "catalogue+picturewindow-v0.9-beta.2"
       }
     ],
     "Magenta": [
-      {
-        "object_types": [
-          "Picture"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
-    "Marks": [
       {
         "object_types": [
           "Picture"
@@ -50176,8 +50268,29 @@
         "object_types": [
           "Picture"
         ],
-        "params": [],
-        "_source": "catalogue"
+        "params": [
+          {
+            "type": "NATURAL",
+            "label": "Number of marks",
+            "default": "6"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Write numbers",
+            "default": "yes"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Draw ticks",
+            "default": "yes"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Draw dotted lines",
+            "default": "no"
+          }
+        ],
+        "_source": "catalogue+picturewindow-v0.9-beta.2"
       }
     ],
     "Marks bottom every": [
@@ -50185,8 +50298,34 @@
         "object_types": [
           "Picture"
         ],
-        "params": [],
-        "_source": "catalogue"
+        "params": [
+          {
+            "type": "REAL",
+            "label": "Units",
+            "default": "1.0"
+          },
+          {
+            "type": "REAL",
+            "label": "Distance",
+            "default": "0.1"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Write numbers",
+            "default": "yes"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Draw ticks",
+            "default": "yes"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Draw dotted lines",
+            "default": "no"
+          }
+        ],
+        "_source": "catalogue+picturewindow-v0.9-beta.2"
       }
     ],
     "Marks left": [
@@ -50194,8 +50333,29 @@
         "object_types": [
           "Picture"
         ],
-        "params": [],
-        "_source": "catalogue"
+        "params": [
+          {
+            "type": "NATURAL",
+            "label": "Number of marks",
+            "default": "6"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Write numbers",
+            "default": "yes"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Draw ticks",
+            "default": "yes"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Draw dotted lines",
+            "default": "no"
+          }
+        ],
+        "_source": "catalogue+picturewindow-v0.9-beta.2"
       }
     ],
     "Marks left every": [
@@ -50203,8 +50363,34 @@
         "object_types": [
           "Picture"
         ],
-        "params": [],
-        "_source": "catalogue"
+        "params": [
+          {
+            "type": "REAL",
+            "label": "Units",
+            "default": "1.0"
+          },
+          {
+            "type": "REAL",
+            "label": "Distance",
+            "default": "0.1"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Write numbers",
+            "default": "yes"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Draw ticks",
+            "default": "yes"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Draw dotted lines",
+            "default": "no"
+          }
+        ],
+        "_source": "catalogue+picturewindow-v0.9-beta.2"
       }
     ],
     "Marks right": [
@@ -50212,8 +50398,29 @@
         "object_types": [
           "Picture"
         ],
-        "params": [],
-        "_source": "catalogue"
+        "params": [
+          {
+            "type": "NATURAL",
+            "label": "Number of marks",
+            "default": "6"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Write numbers",
+            "default": "yes"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Draw ticks",
+            "default": "yes"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Draw dotted lines",
+            "default": "no"
+          }
+        ],
+        "_source": "catalogue+picturewindow-v0.9-beta.2"
       }
     ],
     "Marks right every": [
@@ -50221,8 +50428,34 @@
         "object_types": [
           "Picture"
         ],
-        "params": [],
-        "_source": "catalogue"
+        "params": [
+          {
+            "type": "REAL",
+            "label": "Units",
+            "default": "1.0"
+          },
+          {
+            "type": "REAL",
+            "label": "Distance",
+            "default": "0.1"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Write numbers",
+            "default": "yes"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Draw ticks",
+            "default": "yes"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Draw dotted lines",
+            "default": "no"
+          }
+        ],
+        "_source": "catalogue+picturewindow-v0.9-beta.2"
       }
     ],
     "Marks top": [
@@ -50230,8 +50463,29 @@
         "object_types": [
           "Picture"
         ],
-        "params": [],
-        "_source": "catalogue"
+        "params": [
+          {
+            "type": "NATURAL",
+            "label": "Number of marks",
+            "default": "6"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Write numbers",
+            "default": "yes"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Draw ticks",
+            "default": "yes"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Draw dotted lines",
+            "default": "no"
+          }
+        ],
+        "_source": "catalogue+picturewindow-v0.9-beta.2"
       }
     ],
     "Marks top every": [
@@ -50239,8 +50493,34 @@
         "object_types": [
           "Picture"
         ],
-        "params": [],
-        "_source": "catalogue"
+        "params": [
+          {
+            "type": "REAL",
+            "label": "Units",
+            "default": "1.0"
+          },
+          {
+            "type": "REAL",
+            "label": "Distance",
+            "default": "0.1"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Write numbers",
+            "default": "yes"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Draw ticks",
+            "default": "yes"
+          },
+          {
+            "type": "BOOLEAN",
+            "label": "Draw dotted lines",
+            "default": "no"
+          }
+        ],
+        "_source": "catalogue+picturewindow-v0.9-beta.2"
       }
     ],
     "Maroon": [
@@ -50289,15 +50569,6 @@
       }
     ],
     "Olive": [
-      {
-        "object_types": [
-          "Picture"
-        ],
-        "params": [],
-        "_source": "catalogue"
-      }
-    ],
-    "One logarithmic mark": [
       {
         "object_types": [
           "Picture"
@@ -50915,8 +51186,14 @@
         "object_types": [
           "Picture"
         ],
-        "params": [],
-        "_source": "catalogue"
+        "params": [
+          {
+            "type": "SENTENCE",
+            "label": "File path$",
+            "default": "/path/to/file.prapic"
+          }
+        ],
+        "_source": "catalogue+picturewindow-v0.9-beta.2"
       }
     ],
     "Rectangle text (maximal fit)": [
@@ -51051,8 +51328,14 @@
         "object_types": [
           "Picture"
         ],
-        "params": [],
-        "_source": "catalogue"
+        "params": [
+          {
+            "type": "SENTENCE",
+            "label": "File path$",
+            "default": "/path/to/file.png"
+          }
+        ],
+        "_source": "catalogue+picturewindow-v0.9-beta.2"
       }
     ],
     "Save as 600-dpi PNG file": [
@@ -51060,8 +51343,14 @@
         "object_types": [
           "Picture"
         ],
-        "params": [],
-        "_source": "catalogue"
+        "params": [
+          {
+            "type": "SENTENCE",
+            "label": "File path$",
+            "default": "/path/to/file.png"
+          }
+        ],
+        "_source": "catalogue+picturewindow-v0.9-beta.2"
       }
     ],
     "Save as EPS file": [
@@ -51069,8 +51358,14 @@
         "object_types": [
           "Picture"
         ],
-        "params": [],
-        "_source": "catalogue"
+        "params": [
+          {
+            "type": "SENTENCE",
+            "label": "File path$",
+            "default": "/path/to/file.eps"
+          }
+        ],
+        "_source": "catalogue+picturewindow-v0.9-beta.2"
       }
     ],
     "Save as PDF file": [
@@ -51078,8 +51373,14 @@
         "object_types": [
           "Picture"
         ],
-        "params": [],
-        "_source": "catalogue"
+        "params": [
+          {
+            "type": "SENTENCE",
+            "label": "File path$",
+            "default": "/path/to/file.pdf"
+          }
+        ],
+        "_source": "catalogue+picturewindow-v0.9-beta.2"
       }
     ],
     "Save as Windows metafile": [
@@ -51087,8 +51388,14 @@
         "object_types": [
           "Picture"
         ],
-        "params": [],
-        "_source": "catalogue"
+        "params": [
+          {
+            "type": "SENTENCE",
+            "label": "File path$",
+            "default": "/path/to/file.wmf"
+          }
+        ],
+        "_source": "catalogue+picturewindow-v0.9-beta.2"
       }
     ],
     "Save as fontless EPS file (SILIPA)": [
@@ -51096,8 +51403,14 @@
         "object_types": [
           "Picture"
         ],
-        "params": [],
-        "_source": "catalogue"
+        "params": [
+          {
+            "type": "SENTENCE",
+            "label": "File path$",
+            "default": "/path/to/file.eps"
+          }
+        ],
+        "_source": "catalogue+picturewindow-v0.9-beta.2"
       }
     ],
     "Save as fontless EPS file (XIPA)": [
@@ -51105,8 +51418,14 @@
         "object_types": [
           "Picture"
         ],
-        "params": [],
-        "_source": "catalogue"
+        "params": [
+          {
+            "type": "SENTENCE",
+            "label": "File path$",
+            "default": "/path/to/file.eps"
+          }
+        ],
+        "_source": "catalogue+picturewindow-v0.9-beta.2"
       }
     ],
     "Save as praat picture file": [
@@ -51114,8 +51433,14 @@
         "object_types": [
           "Picture"
         ],
-        "params": [],
-        "_source": "catalogue"
+        "params": [
+          {
+            "type": "SENTENCE",
+            "label": "File path$",
+            "default": "/path/to/file.prapic"
+          }
+        ],
+        "_source": "catalogue+picturewindow-v0.9-beta.2"
       }
     ],
     "Select inner viewport": [
@@ -51836,7 +52161,7 @@
     {
       "name": "backslashTrigraphsToUnicode$",
       "args": "string$",
-      "desc": "convert e.g. \\ct to \u0254"
+      "desc": "convert e.g. \\ct to ɔ"
     },
     {
       "name": "barkToHertz",
@@ -51856,7 +52181,7 @@
     {
       "name": "beta",
       "args": "x, y",
-      "desc": "\u03b2 function"
+      "desc": "β function"
     },
     {
       "name": "beta2",
@@ -51916,12 +52241,12 @@
     {
       "name": "chiSquareP",
       "args": "chiSquare, df",
-      "desc": "area under the \u03c7\u00b2 curve up to chiSquare"
+      "desc": "area under the χ² curve up to chiSquare"
     },
     {
       "name": "chiSquareQ",
       "args": "chiSquare, df",
-      "desc": "area under the \u03c7\u00b2 curve after chiSquare"
+      "desc": "area under the χ² curve after chiSquare"
     },
     {
       "name": "chooseDirectory$",
@@ -51981,7 +52306,7 @@
     {
       "name": "correlation",
       "args": "u#, v#",
-      "desc": "correlation (between \u22121 and +1) of two vectors"
+      "desc": "correlation (between −1 and +1) of two vectors"
     },
     {
       "name": "cos",
@@ -52212,7 +52537,7 @@
     {
       "name": "erfc",
       "args": "x",
-      "desc": "complement of the error function, i.e. 1 \u2212 erf (x)"
+      "desc": "complement of the error function, i.e. 1 − erf (x)"
     },
     {
       "name": "evaluate",
@@ -52558,7 +52883,7 @@
     {
       "name": "lnGamma",
       "args": "x",
-      "desc": "logarithm of the \u0393 function"
+      "desc": "logarithm of the Γ function"
     },
     {
       "name": "log10",
@@ -52870,7 +53195,7 @@
     {
       "name": "randomGamma##",
       "args": "nrow, ncol, shape, rate",
-      "desc": "nrow \u00d7 ncol independent gamma-distributed random numbers"
+      "desc": "nrow × ncol independent gamma-distributed random numbers"
     },
     {
       "name": "randomGauss",
@@ -52885,7 +53210,7 @@
     {
       "name": "randomGauss##",
       "args": "nrow, ncol, mu, sigma",
-      "desc": "nrow \u00d7 ncol independent normally distributed random numbers"
+      "desc": "nrow × ncol independent normally distributed random numbers"
     },
     {
       "name": "randomImax",
@@ -52905,7 +53230,7 @@
     {
       "name": "randomInteger##",
       "args": "nrow, ncol, min, max",
-      "desc": "nrow \u00d7 ncol independent uniformly distributed random integers"
+      "desc": "nrow × ncol independent uniformly distributed random integers"
     },
     {
       "name": "randomPoisson",
@@ -52925,7 +53250,7 @@
     {
       "name": "randomUniform##",
       "args": "nrow, ncol, min, max",
-      "desc": "nrow \u00d7 ncol independent uniformly distributed random numbers"
+      "desc": "nrow × ncol independent uniformly distributed random numbers"
     },
     {
       "name": "random_initializeSafelyAndUnpredictably",
@@ -53180,7 +53505,7 @@
     {
       "name": "sincpi",
       "args": "x",
-      "desc": "sin (\u03c0*x) / (\u03c0*x)"
+      "desc": "sin (π*x) / (π*x)"
     },
     {
       "name": "sinh",
@@ -53220,12 +53545,12 @@
     {
       "name": "solve#",
       "args": "a##, y#",
-      "desc": "find x for which A \u00b7 x = y"
+      "desc": "find x for which A · x = y"
     },
     {
       "name": "solve##",
       "args": "a##, y##",
-      "desc": "find X for which A \u00b7 X = Y"
+      "desc": "find X for which A · X = Y"
     },
     {
       "name": "solveNonnegative#",
@@ -53335,7 +53660,7 @@
     {
       "name": "sumOver",
       "args": "loopVariable to n, numericExpressionOptionallyUsingLoopVariable",
-      "desc": "\u03a3"
+      "desc": "Σ"
     },
     {
       "name": "system",
@@ -53437,7 +53762,7 @@
     {
       "name": "unicodeToBackslashTrigraphs$",
       "args": "string$",
-      "desc": "convert e.g. \u0254 to \\ct"
+      "desc": "convert e.g. ɔ to \\ct"
     },
     {
       "name": "upperCamelCase$",
@@ -53532,7 +53857,7 @@
     {
       "name": "zero##",
       "args": "nrow, ncol",
-      "desc": "matrix with nrow \u00d7 ncol elements that are all 0"
+      "desc": "matrix with nrow × ncol elements that are all 0"
     }
   ],
   "function_signatures": {
@@ -53670,7 +53995,7 @@
     },
     "backslashTrigraphsToUnicode$": {
       "args": "string$",
-      "desc": "convert e.g. \\ct to \u0254"
+      "desc": "convert e.g. \\ct to ɔ"
     },
     "barkToHertz": {
       "args": "x",
@@ -53686,7 +54011,7 @@
     },
     "beta": {
       "args": "x, y",
-      "desc": "\u03b2 function"
+      "desc": "β function"
     },
     "beta2": {
       "args": "a, b",
@@ -53726,11 +54051,11 @@
     },
     "chiSquareP": {
       "args": "chiSquare, df",
-      "desc": "area under the \u03c7\u00b2 curve up to chiSquare"
+      "desc": "area under the χ² curve up to chiSquare"
     },
     "chiSquareQ": {
       "args": "chiSquare, df",
-      "desc": "area under the \u03c7\u00b2 curve after chiSquare"
+      "desc": "area under the χ² curve after chiSquare"
     },
     "chooseFolder$": {
       "args": "title$",
@@ -53778,7 +54103,7 @@
     },
     "correlation": {
       "args": "u#, v#",
-      "desc": "correlation (between \u22121 and +1) of two vectors"
+      "desc": "correlation (between −1 and +1) of two vectors"
     },
     "cos": {
       "args": "x",
@@ -53954,7 +54279,7 @@
     },
     "erfc": {
       "args": "x",
-      "desc": "complement of the error function, i.e. 1 \u2212 erf (x)"
+      "desc": "complement of the error function, i.e. 1 − erf (x)"
     },
     "evaluate": {
       "args": "...",
@@ -54242,7 +54567,7 @@
     },
     "lnGamma": {
       "args": "x",
-      "desc": "logarithm of the \u0393 function"
+      "desc": "logarithm of the Γ function"
     },
     "log2": {
       "args": "x",
@@ -54498,7 +54823,7 @@
     },
     "randomGamma##": {
       "args": "nrow, ncol, shape, rate",
-      "desc": "nrow \u00d7 ncol independent gamma-distributed random numbers",
+      "desc": "nrow × ncol independent gamma-distributed random numbers",
       "alt_args": "matrix##, shape, rate",
       "alt_desc": "duplicate matrix##, and replace all cells with independent gamma-distributed random numbers"
     },
@@ -54514,7 +54839,7 @@
     },
     "randomGauss##": {
       "args": "nrow, ncol, mu, sigma",
-      "desc": "nrow \u00d7 ncol independent normally distributed random numbers",
+      "desc": "nrow × ncol independent normally distributed random numbers",
       "alt_args": "matrix##, mu, sigma",
       "alt_desc": "duplicate matrix##, and replace all cells with independent normally distributed random numbers"
     },
@@ -54534,7 +54859,7 @@
     },
     "randomInteger##": {
       "args": "nrow, ncol, min, max",
-      "desc": "nrow \u00d7 ncol independent uniformly distributed random integers",
+      "desc": "nrow × ncol independent uniformly distributed random integers",
       "alt_args": "matrix##, min, max",
       "alt_desc": "duplicate matrix##, and replace all cells with independent uniformly distributed random integers"
     },
@@ -54554,7 +54879,7 @@
     },
     "randomUniform##": {
       "args": "nrow, ncol, min, max",
-      "desc": "nrow \u00d7 ncol independent uniformly distributed random numbers",
+      "desc": "nrow × ncol independent uniformly distributed random numbers",
       "alt_args": "matrix##, min, max",
       "alt_desc": "duplicate matrix##, and replace all cells with independent uniformly distributed random numbers"
     },
@@ -54764,7 +55089,7 @@
     },
     "sincpi": {
       "args": "x",
-      "desc": "sin (\u03c0*x) / (\u03c0*x)"
+      "desc": "sin (π*x) / (π*x)"
     },
     "sinh": {
       "args": "x",
@@ -54796,11 +55121,11 @@
     },
     "solve#": {
       "args": "a##, y#",
-      "desc": "find x for which A \u00b7 x = y"
+      "desc": "find x for which A · x = y"
     },
     "solve##": {
       "args": "a##, y##",
-      "desc": "find X for which A \u00b7 X = Y"
+      "desc": "find X for which A · X = Y"
     },
     "solveNonnegative#": {
       "args": "a##, y# [, x], maximumNumberOfIterations, tolerance, infoLevel",
@@ -54888,7 +55213,7 @@
     },
     "sumOver": {
       "args": "loopVariable to n, numericExpressionOptionallyUsingLoopVariable",
-      "desc": "\u03a3"
+      "desc": "Σ"
     },
     "tab$": {
       "args": "",
@@ -54960,7 +55285,7 @@
     },
     "unicodeToBackslashTrigraphs$": {
       "args": "string$",
-      "desc": "convert e.g. \u0254 to \\ct"
+      "desc": "convert e.g. ɔ to \\ct"
     },
     "upperCamelCase$": {
       "args": "string$",
@@ -55036,7 +55361,7 @@
     },
     "zero##": {
       "args": "nrow, ncol",
-      "desc": "matrix with nrow \u00d7 ncol elements that are all 0"
+      "desc": "matrix with nrow × ncol elements that are all 0"
     },
     "editor": {
       "args": "...",
@@ -55367,7 +55692,7 @@
     {
       "name": "@emlClearInfo",
       "purpose": "Explicit Info window clear for dialog handlers",
-      "params": "\u2014",
+      "params": "—",
       "scope": "public"
     },
     {
@@ -55379,7 +55704,7 @@
     {
       "name": "@emlReportFooter",
       "purpose": "Print report footer with borders",
-      "params": "\u2014",
+      "params": "—",
       "scope": "public"
     },
     {
@@ -55403,7 +55728,7 @@
     {
       "name": "@emlReportBlank",
       "purpose": "Print blank line in report",
-      "params": "\u2014",
+      "params": "—",
       "scope": "public"
     },
     {
@@ -55433,7 +55758,7 @@
     {
       "name": "@emlReportDescriptiveHeader",
       "purpose": "Print column headers for descriptive stats table",
-      "params": "\u2014",
+      "params": "—",
       "scope": "public"
     },
     {
@@ -55463,7 +55788,7 @@
     {
       "name": "@emlCSVInit",
       "purpose": "Initialize CSV export accumulator arrays",
-      "params": "\u2014",
+      "params": "—",
       "scope": "public"
     },
     {
@@ -55738,7 +56063,7 @@
     },
     {
       "name": "@emlLinearRegression",
-      "purpose": "OLS simple linear regression (slope, intercept, R\u00b2, SE, F, p)",
+      "purpose": "OLS simple linear regression (slope, intercept, R², SE, F, p)",
       "params": ".x#, .y#",
       "scope": "public"
     },
@@ -55751,13 +56076,13 @@
     {
       "name": "@emlInitDrawingDefaults",
       "purpose": "Initialize panel origin globals and drawing defaults",
-      "params": "\u2014",
+      "params": "—",
       "scope": "public"
     },
     {
       "name": "@emlResetDrawnExtent",
       "purpose": "Reset drawn extent tracker to zero",
-      "params": "\u2014",
+      "params": "—",
       "scope": "public"
     },
     {
@@ -55775,7 +56100,7 @@
     {
       "name": "@emlSetPanelViewport",
       "purpose": "Select outer viewport from theme-computed bounds",
-      "params": "\u2014",
+      "params": "—",
       "scope": "public"
     },
     {
@@ -55829,13 +56154,13 @@
     {
       "name": "@emlDrawInnerBoxIf",
       "purpose": "Draw inner box if config flag is set",
-      "params": "\u2014",
+      "params": "—",
       "scope": "public"
     },
     {
       "name": "@emlExpandAxisControls",
       "purpose": "Parse per-axis tick/value/label visibility flags",
-      "params": "\u2014",
+      "params": "—",
       "scope": "public"
     },
     {
@@ -55913,7 +56238,7 @@
     {
       "name": "@emlAssertFullViewport",
       "purpose": "Select full outer viewport from drawn extent globals",
-      "params": "\u2014",
+      "params": "—",
       "scope": "public"
     },
     {
@@ -55930,7 +56255,7 @@
     },
     {
       "name": "@emlApplyChannelChoice",
-      "purpose": "Batch-mode stereo handler \u2014 applies pre-selected channel handling without dialog",
+      "purpose": "Batch-mode stereo handler — applies pre-selected channel handling without dialog",
       "params": ".soundId, .channelHandling",
       "scope": "public"
     },
@@ -55955,7 +56280,7 @@
     {
       "name": "@emlInitAlphaSprites",
       "purpose": "Locate sprites/ directory; set .available and .dir$",
-      "params": "\u2014",
+      "params": "—",
       "scope": "public"
     },
     {
@@ -56105,7 +56430,7 @@
     {
       "name": "@emlClearAnnotations",
       "purpose": "Reset all annotation arrays to empty",
-      "params": "\u2014",
+      "params": "—",
       "scope": "public"
     },
     {
@@ -56123,7 +56448,7 @@
     {
       "name": "@emlStackBrackets",
       "purpose": "Compute non-overlapping vertical positions for brackets",
-      "params": "\u2014",
+      "params": "—",
       "scope": "public"
     },
     {
@@ -56200,7 +56525,7 @@
     },
     {
       "name": "@emlReportBridgeStats",
-      "purpose": "Thin dispatcher \u2014 routes to shared reporters by test type",
+      "purpose": "Thin dispatcher — routes to shared reporters by test type",
       "params": ".tableId, .dataCol$, .groupCol$",
       "scope": "public"
     },
@@ -56273,25 +56598,25 @@
     {
       "name": "@emlLoadConfig",
       "purpose": "Load saved graph settings from preferences file",
-      "params": "\u2014",
+      "params": "—",
       "scope": "public"
     },
     {
       "name": "@emlSaveConfig",
       "purpose": "Save current graph settings to preferences file",
-      "params": "\u2014",
+      "params": "—",
       "scope": "public"
     },
     {
       "name": "@emlDetectContext",
       "purpose": "Detect selected object type and configure graph options",
-      "params": "\u2014",
+      "params": "—",
       "scope": "public"
     },
     {
       "name": "@emlBuildFilteredMenu",
       "purpose": "Build graph type menu filtered by selected object type",
-      "params": "\u2014",
+      "params": "—",
       "scope": "public"
     },
     {
@@ -56393,7 +56718,7 @@
     {
       "name": "@emlBuildDateStamp",
       "purpose": "Generate YYYY-MM-DD date string from Praat date info",
-      "params": "\u2014",
+      "params": "—",
       "scope": "public"
     },
     {
@@ -56417,7 +56742,7 @@
     {
       "name": "@emlVibratoSelectIntervals",
       "purpose": "Let user select which intervals to analyze",
-      "params": "\u2014",
+      "params": "—",
       "scope": "public"
     },
     {
@@ -56477,13 +56802,13 @@
     {
       "name": "@emlResetSans",
       "purpose": "Reset Demo window to Helvetica, ambient size, 0-100 axes",
-      "params": "\u2014",
+      "params": "—",
       "scope": "public"
     },
     {
       "name": "@emlClearPage",
       "purpose": "Clear Demo window with background color",
-      "params": "\u2014",
+      "params": "—",
       "scope": "public"
     },
     {
@@ -56501,7 +56826,7 @@
     {
       "name": "@emlDrawGuides",
       "purpose": "Draw full development grid overlay (only if showGrid = 1)",
-      "params": "\u2014",
+      "params": "—",
       "scope": "public"
     },
     {
@@ -56663,7 +56988,7 @@
     {
       "name": "@emlTestInit",
       "purpose": "Initialize test runner (clear Info window, reset counters)",
-      "params": "\u2014",
+      "params": "—",
       "scope": "public"
     },
     {
@@ -56711,7 +57036,7 @@
     {
       "name": "@emlTestSummary",
       "purpose": "Print pass/fail summary and exit with status",
-      "params": "\u2014",
+      "params": "—",
       "scope": "public"
     }
   ],
