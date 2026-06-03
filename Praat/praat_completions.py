@@ -992,6 +992,52 @@ def _collect_form_variables(view):
     return out
 
 
+# ============================================================================
+# SCRIPT-DEFINED PROCEDURE COLLECTION (@-call completion)
+# ============================================================================
+# Scan the buffer for `procedure name[: .a, .b]` definitions so that typing
+# `@` offers the procedures THIS script defines, inserting the real parameter
+# signature as tab-stops. EML library procedures are intentionally NOT offered
+# here — that would couple the plugin to the 273-entry library dataset.
+#
+# Matches both the modern colon form (`procedure foo: .a, .b`) and the older
+# space form (`procedure foo .a .b`). Comment lines (`# procedure ...`) do not
+# match because the `#` precedes `procedure`. Inline `;` comments are stripped.
+_PROC_DEF_RE = re.compile(r'^\s*procedure\s+([A-Za-z_][A-Za-z0-9_.]*)\s*(:)?\s*(.*)$')
+
+
+def _collect_script_procedures(view):
+    """Scan the buffer for `procedure` definitions. Return a deduped list of
+    dicts {name, call_args, raw_params}, where call_args is a snippet fragment
+    (the formal parameters as numbered tab-stops) for the @-call."""
+    text = view.substr(sublime.Region(0, view.size()))
+    seen = set()
+    out = []
+    for raw in text.split("\n"):
+        m = _PROC_DEF_RE.match(raw)
+        if not m:
+            continue
+        name = m.group(1)
+        rest = m.group(3)
+        idx = rest.find(";")           # strip an inline comment
+        if idx != -1:
+            rest = rest[:idx]
+        rest = rest.strip()
+        if name in seen:
+            continue
+        seen.add(name)
+        if rest:
+            params = [p.strip() for p in rest.split(",") if p.strip()]
+            call_args = ", ".join(
+                "${%d:%s}" % (i + 1, p.replace("$", "\\$"))
+                for i, p in enumerate(params)
+            )
+        else:
+            call_args = ""
+        out.append({"name": name, "call_args": call_args, "raw_params": rest})
+    return out
+
+
 def _form_field_html(fdef):
     """Render the shared HTML body for a form/beginPause field entry.
 
@@ -1031,6 +1077,44 @@ class PraatCompletionListener(sublime_plugin.EventListener):
         pre_text_lower = pre_text.lower().rstrip()
 
         results = []
+
+        # --- @-procedure calls: procedures DEFINED in this script ---
+        # Gated on an "@" immediately before the typed token. In this context
+        # nothing else (commands, functions, fields) is valid, so build only
+        # procedure-call completions and return them alone. On macOS "@" is not
+        # a word character, so it sits in pre_text and the prefix is the bare
+        # name; on platforms where "@" lands inside the word we strip it and
+        # re-emit it in the snippet.
+        at_prefix = prefix.lower() if prefix else ""
+        at_call = False
+        snippet_at = ""
+        if pre_text.endswith("@"):
+            at_call = True
+        elif prefix.startswith("@"):
+            at_call = True
+            at_prefix = prefix[1:].lower()
+            snippet_at = "@"
+        if at_call:
+            proc_results = []
+            for p in _collect_script_procedures(view):
+                if not p["name"].lower().startswith(at_prefix):
+                    continue
+                call = p["call_args"]
+                snip = snippet_at + p["name"] + ((": " + call) if call else "")
+                detail = "Procedure defined in this script."
+                if p["raw_params"]:
+                    detail += " Parameters: <code>%s</code>." % _esc(p["raw_params"])
+                proc_results.append(sublime.CompletionItem.snippet_completion(
+                    trigger=p["name"],
+                    snippet=snip,
+                    annotation="procedure (this script)",
+                    kind=(sublime.KIND_ID_FUNCTION, "@", "Procedure"),
+                    details=detail,
+                ))
+            if not proc_results:
+                return None
+            return sublime.CompletionList(
+                proc_results, flags=sublime.INHIBIT_WORD_COMPLETIONS)
 
         # --- Commands (per-variant) ---
         schema = _data.get("schema_version", 1)
@@ -1116,6 +1200,11 @@ class PraatCompletionListener(sublime_plugin.EventListener):
             for fn, sig in _func_sigs.items():
                 if not fn.lower().startswith(prefix_lower):
                     continue
+                if fn in ("procedure", "endproc"):
+                    # Handled explicitly below with a proper definition
+                    # scaffold. The generic path has no args for these and
+                    # emits the junk fallback `procedure ($0)` / `endproc ($0)`.
+                    continue
                 if fn in COLON_COMMANDS:
                     item = sublime.CompletionItem.snippet_completion(
                         trigger=fn,
@@ -1164,6 +1253,27 @@ class PraatCompletionListener(sublime_plugin.EventListener):
                         kind=(sublime.KIND_ID_FUNCTION, "f", "Function"),
                     )
                 results.append(item)
+
+            # --- Procedure / endproc definition scaffolds ---
+            # Replaces the suppressed generic-function completions above.
+            if "procedure".startswith(prefix_lower):
+                results.append(sublime.CompletionItem.snippet_completion(
+                    trigger="procedure",
+                    snippet="procedure ${1:name}: ${2:.param}\n\t$0\nendproc",
+                    annotation="define a procedure",
+                    kind=(sublime.KIND_ID_FUNCTION, "@", "Procedure"),
+                    details="Procedure definition scaffold. The dot-prefixed "
+                            "names (<code>.param</code>) are parameters \u2014 "
+                            "variables used inside the procedure, filled when you "
+                            "call it. Close the block with <code>endproc</code>.",
+                ))
+            if "endproc".startswith(prefix_lower):
+                results.append(sublime.CompletionItem.snippet_completion(
+                    trigger="endproc",
+                    snippet="endproc",
+                    annotation="end a procedure definition",
+                    kind=(sublime.KIND_ID_FUNCTION, "@", "Procedure"),
+                ))
 
             # --- Types ---
             for ot in _data.get("object_types", []):
@@ -1346,6 +1456,8 @@ POPUP_CSS = """
     .clinical { color: var(--purplish); margin-top: 0.5rem; }
     .section { margin-top: 0.3rem; }
     .opts { color: var(--bluish); font-family: monospace; font-size: 0.9em; }
+    .codeblock { font-family: monospace; font-size: 0.9em; color: var(--bluish);
+                 margin: 0.2rem 0 0.35rem 0; line-height: 1.35; }
 </style>
 """
 
@@ -1359,6 +1471,19 @@ def _esc(s):
     return (str(s).replace("&", "&amp;")
                   .replace("<", "&lt;")
                   .replace(">", "&gt;"))
+
+
+def _code_block(text):
+    """Render a multi-line code example for a minihtml popup. minihtml
+    collapses runs of whitespace and ignores newlines, so indentation is
+    rebuilt with &nbsp; and line breaks with <br>."""
+    lines = []
+    for ln in text.split("\n"):
+        esc = _esc(ln)
+        stripped = esc.lstrip(" ")
+        lead = len(esc) - len(stripped)
+        lines.append(("&nbsp;" * lead) + stripped)
+    return '<div class="codeblock">' + "<br>".join(lines) + "</div>"
 
 
 def _popup_show(view, point, body, max_width=720, max_height=480):
@@ -1446,6 +1571,9 @@ class PraatHoverListener(sublime_plugin.EventListener):
                 return
             if word == "endform":
                 self._popup_form_field(view, point, "endform")
+                return
+            if word in ("procedure", "endproc"):
+                self._popup_procedure_keyword(view, point, word)
                 return
 
         # Multi-word commands: extract the full scoped region (the syntax file
@@ -1667,6 +1795,113 @@ class PraatHoverListener(sublime_plugin.EventListener):
         body = ('<div class="head">%s</div>'
                 '<i>Praat object type</i>') % _esc(name)
         _popup_show(view, point, body, max_width=400, max_height=120)
+
+    def _popup_procedure_keyword(self, view, point, word):
+        """Built-out reference popup for the `procedure` / `endproc`
+        keywords (distinct from _popup_procedure, which documents @-calls
+        to specific library procedures)."""
+        if word == "endproc":
+            body = ('<div class="head">endproc</div>'
+                    "Closes a procedure definition. Every "
+                    "<code>procedure</code> block needs exactly one matching "
+                    "<code>endproc</code>. Bare keyword \u2014 no arguments.")
+            _popup_show(view, point, body, max_width=520, max_height=180)
+            return
+
+        body = '<div class="head">procedure</div>'
+        body += _code_block(
+            "procedure name: .param1, .param2\n    ...\nendproc")
+        body += ("A named, reusable block of code. You define it once and run "
+                 "it anywhere later with <code>@name</code>.")
+
+        body += _SEP
+        body += "<b>Passing values in (parameters)</b><br>"
+        body += ("The dot-prefixed names after the colon are <i>parameters</i>: "
+                 "variables you use inside the procedure, each filled by a value "
+                 "you pass in from outside when you call it. "
+                 "When you call with <code>@</code>, you supply one value for "
+                 "every parameter, and each value corresponds to a parameter by "
+                 "its position in the call \u2014 the first value fills the first "
+                 "parameter, the second the second, and so on. Praat has no named "
+                 "arguments, so position is the only thing linking a value to its "
+                 "parameter; a value in the wrong spot fills the wrong parameter."
+                 "<br><br>")
+        body += ("Each value can be a number, a string in quotes, a numeric "
+                 "vector (<code>#</code>), a string vector (<code>$#</code>), or "
+                 "a matrix (<code>##</code>) \u2014 written out literally or as a "
+                 "variable that already holds that data:")
+        body += _code_block(
+            'procedure demo: .count, .name$, .samples#, .labels$#, .grid##\n'
+            '    ...\n'
+            'endproc\n'
+            '\n'
+            'n      = 3\n'
+            'who$   = "trial1"\n'
+            'data#  = {1.2, 3.4, 5.6}\n'
+            'tags$# = {"a", "b"}\n'
+            'm##    = {{1, 2}, {3, 4}}\n'
+            '@demo: n, who$, data#, tags$#, m##\n'
+            '\n'
+            '; or passed as literals:\n'
+            '@demo: 3, "trial1", {1.2, 3.4, 5.6}, {"a", "b"}, {{1, 2}, {3, 4}}')
+        body += "Parameters are local \u2014 they exist only inside the procedure."
+
+        body += _SEP
+        body += "<b>Using main-script variables instead</b><br>"
+        body += ("A procedure can also reach a variable from the main script "
+                 "directly, with no parameter at all, as long as that variable "
+                 "has no dot (undotted variables are global \u2014 shared "
+                 "everywhere). It can even overwrite one. That reach is also the "
+                 "hazard: a procedure can silently change a main-script variable. "
+                 "Best practice is to pass what the procedure needs in through "
+                 "parameters, so its inputs are explicit and it can't alter "
+                 "something it shouldn't.")
+
+        body += _SEP
+        body += "<b>Getting results back</b><br>"
+        body += ("Praat procedures don't return a value. Read a local result "
+                 "after the call using the qualified name "
+                 "<code>procedureName.var</code>:")
+        body += _code_block(
+            "procedure meanSD: .values#\n"
+            "    .mean = mean (.values#)\n"
+            "    .sd   = stdev (.values#)\n"
+            "endproc\n"
+            "\n"
+            "@meanSD: signal#\n"
+            "m = meanSD.mean\n"
+            "s = meanSD.sd")
+        body += ("Those outputs persist until the next call to the same "
+                 "procedure, so copy them out immediately if you'll call it "
+                 "again.")
+
+        body += _SEP
+        body += "<b>Calling</b><br>"
+        body += _code_block(
+            "@name           \u2014 no arguments\n"
+            "@name: a, b     \u2014 values matched to parameters by position")
+        body += ("The <code>@</code> is required; the colon appears only when "
+                 "passing values.")
+
+        body += _SEP
+        body += "<b>Note</b><br>"
+        body += ("A procedure cannot be defined inside another procedure. "
+                 "Calling other procedures from inside a procedure body is fine.")
+
+        body += _SEP
+        body += "<b>Where to put them</b><br>"
+        body += ("A procedure can sit anywhere in the script \u2014 Praat finds "
+                 "it wherever it is, so a call can even come before the "
+                 "definition. Common practice is to gather them all at the top or "
+                 "all at the bottom, not inline where they're called: scattered "
+                 "definitions are hard to track down when you want to edit several "
+                 "at once. For procedures you reuse across scripts, keep them in "
+                 "their own file and pull them in with the include directive:")
+        body += _code_block("include procedures.praat")
+        body += ("<i>include is a preprocessor line \u2014 no colon, an unquoted "
+                 "path, and the path cannot be a variable.</i>")
+
+        _popup_show(view, point, body, max_width=620, max_height=640)
 
     def _popup_procedure(self, view, point, text):
         # text is like "@emlMean: .data#" — pull the bare @name token
