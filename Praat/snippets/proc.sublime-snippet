@@ -1,8 +1,0 @@
-<snippet>
-    <content><![CDATA[procedure ${1:name}: ${2:.param}
-	$0
-endproc]]></content>
-    <tabTrigger>proc</tabTrigger>
-    <scope>source.praat</scope>
-    <description>Procedure</description>
-</snippet>
